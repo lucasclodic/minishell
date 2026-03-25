@@ -28,26 +28,28 @@ SRCS =	srcs/minishell.c\
 
 OBJ_DIR = obj
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
+VPATH = srcs:srcs/parsing:srcs/env:srcs/signals:builtins:.
 
-all : $(NAME)
+all: $(NAME)
 
-$(NAME) : $(OBJS)
+$(NAME): $(OBJS)
 	@$(CC) $(CFLAGS) $(OBJS) -lreadline -o $(NAME)
 
-%.o : %.c includes/minishell.h
-	@mkdir -p $(OBJ_DIR)
+$(OBJ_DIR)/%.o: %.c includes/minishell.h | $(OBJ_DIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
-	@mv $@ $(OBJ_DIR)
 
-clean :
-	@rm -rf $(OBJ_DRCT)
+$(OBJ_DIR):
+	@mkdir -p $(OBJ_DIR)
 
-fclean : clean
+clean:
+	@rm -rf $(OBJ_DIR)
+
+fclean: clean
 	@rm -f $(NAME)
 
-re : fclean all
+re: fclean all
 
-.PHONY : all fclean clean re
+.PHONY: all clean fclean re
 
 
 # NAME = minishell
@@ -82,5 +84,8 @@ re : fclean all
 # 	rm -f $(NAME)
 
 # re : fclean all
+
+# .PHONY : all fclean clean re
+
 
 # .PHONY : all fclean clean re
