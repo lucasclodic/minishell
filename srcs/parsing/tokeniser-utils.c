@@ -6,7 +6,7 @@
 /*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:08:45 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/23 18:15:34 by lucas            ###   ########.fr       */
+/*   Updated: 2026/03/26 10:32:48 by lucas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ void clean_struct(t_node **first)
 	*first = NULL;
 }
 
-static int	is_not_space_or_operator(char c)
+static int	is_space_or_operator(char c)
 {
-	return (c == ' ' || c == '\t' || c == '|' || c == '<' || c == '>');
+	return (c == ' ' || c == '\t' || c == '|' || c == '<' || c == '>'); // retourne 1 si c est un espace
 }
 
 static t_token_type	token_type_identifier(char *str, int start)
@@ -56,9 +56,9 @@ int skip_word(char *str, int i)
 {
 	int type;
 
-	while (str[i] && !is_not_space_or_operator(str[i]))
+	while (str[i] && !is_space_or_operator(str[i]))
 	{
-		if (str[i] == '\'' || str[i] == '"') 
+		if (str[i] == '\'' || str[i] == '"')  // si tu tombes sur une quote tu dois avancer jusqu'à trouver la fin, une quote non fermée est une erreur 
 		{
 			type = str[i]; 
 			i++;

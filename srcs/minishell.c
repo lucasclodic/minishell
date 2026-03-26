@@ -6,7 +6,7 @@
 /*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:08:58 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/23 18:20:58 by lucas            ###   ########.fr       */
+/*   Updated: 2026/03/26 10:21:06 by lucas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,17 +55,15 @@ int	main(int argc, char **argv, char **envp)
 
 	(void)argc;
 	(void)argv;
-	env = copy_env(envp);
+	env = copy_env(envp); // minisehll a sa propre copie du env pour le modifier (export, unset, etc)
 	if (!env)
 		return (1);
 	while (1)
 	{
-		// On active les signaux du mode interactif AVANT readline
-		// pour que ctrl-C affiche un nouveau prompt
+		// On active les signaux du mode interactif AVANT readline pour que ctrl-C affiche un nouveau propmpt
 		setup_signals_interactive();
 		str = readline("minishell> ");
-		// ctrl-D → readline retourne NULL → on quitte proprement
-		if (!str)
+		if (!str) // ctrl-D → readline retourne NULL → on quitte proprement
 		{
 			printf("exit\n");
 			break ;
@@ -75,9 +73,12 @@ int	main(int argc, char **argv, char **envp)
 		if (tokens)
 		{
 			cmds = parser(tokens);
-			expand_cmds(cmds, 0, env);
-			display_cmds(cmds);
-			free_cmds(&cmds);
+			if (cmds)
+			{
+				expand_cmds(cmds, 0, env);
+				display_cmds(cmds);
+				free_cmds(&cmds);
+			}
 			clean_struct(&tokens);
 		}
 		free(str);
