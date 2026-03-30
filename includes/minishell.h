@@ -20,13 +20,8 @@
 # include <unistd.h>
 # include <signal.h>
 
-// ======== libft.c  (temp) ========
-int		ft_strlen(char *str);
-char	*ft_strdup(char *str);
-char	*ft_itoa(int n);
-char	*ft_substr(char *str, int start, int end);
-int		ft_strncmp(char *s1, char *s2, int n);
-int		ft_strchr(char *str, char c);
+// ======== libft ========
+# include "../libft/libft.h"
 
 typedef enum e_token_type
 {

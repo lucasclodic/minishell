@@ -81,7 +81,7 @@ t_node *create_node(char * str, int start, int end)
 	output = malloc(sizeof(t_node) * 1); 
 	if (!output)
 		return (NULL);
-	output->str = ft_substr(str, start, end);
+	output->str = ft_substr(str, start, end - start);
 	if (!output->str)
 	{
 		free(output);
