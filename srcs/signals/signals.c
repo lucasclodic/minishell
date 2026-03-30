@@ -16,7 +16,7 @@
 // Elle stocke le numero du dernier signal recu.
 // On l'utilise pour savoir si ctrl-C a ete presse
 // et mettre a jour $? (exit status = 130 apres ctrl-C).
-int	g_signal = 0;
+volatile sig_atomic_t	g_signal = 0;
 
 // Handler appele quand ctrl-C (SIGINT) est presse en mode interactif
 // (= quand le shell attend une commande dans readline).

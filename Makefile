@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: lucas <lucas@student.42.fr>                +#+  +:+       +#+         #
+#    By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/19 17:09:08 by lucas             #+#    #+#              #
-#    Updated: 2026/03/24 11:44:48 by lucas            ###   ########.fr        #
+#    Updated: 2026/03/30 13:57:16 by mnicolas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,11 +27,12 @@ SRCS =	srcs/minishell.c\
 		builtins/builtins.c\
 		builtins/echo.c builtins/cd.c builtins/pwd.c\
 		builtins/export.c builtins/unset.c builtins/env.c\
-		builtins/exit.c
+		builtins/exit.c\
+		srcs/exec/exec.c execute_cmd.c exec_utils.c
 
 OBJ_DIR = obj
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
-VPATH = srcs:srcs/parsing:srcs/env:srcs/signals:builtins
+VPATH = srcs:srcs/parsing:srcs/env:srcs/signals:builtins:srcs/exec:.
 
 all: $(NAME)
 

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+         #
+#    By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/10 15:13:47 by lclodic           #+#    #+#              #
-#    Updated: 2025/11/10 15:31:27 by lclodic          ###   ########.fr        #
+#    Updated: 2026/03/30 13:44:42 by mnicolas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,20 +36,20 @@ NAME =			libft.a
 all :			$(NAME)
 
 $(NAME) :		$(OBJS)
-	$(AR) $(NAME) $(OBJS)
+	@$(AR) $(NAME) $(OBJS)
 
 %.o: %.c		libft.h
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean :
-	$(RM) $(OBJS) $(OBJS_BONUS)
+	@$(RM) $(OBJS) $(OBJS_BONUS)
 
 fclean :		clean
-	$(RM) $(NAME)
+	@$(RM) $(NAME)
 
 re : 			fclean $(NAME)
 
 bonus:			$(OBJS) $(OBJS_BONUS)
-	$(AR) $(NAME) $(OBJS) $(OBJS_BONUS)
+	@$(AR) $(NAME) $(OBJS) $(OBJS_BONUS)
 
 .PHONY:			all clean fclean re bonus
