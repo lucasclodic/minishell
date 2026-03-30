@@ -1,3 +1,4 @@
 obj/
 minishell
 *.o
+*.a
