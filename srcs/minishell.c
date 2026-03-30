@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:08:58 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/30 18:21:13 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/03/30 19:18:57 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,7 @@ void build_prompt(char *buf)
 	i = 0;
 	ms = "minishell> ";
     if (!getcwd(cwd, sizeof(cwd)))
-    {
         buf[0] = '\0';
-    }
 	while (cwd[i])
 	{
 		buf[len++] = cwd[i];
@@ -83,10 +81,11 @@ int	main(int argc, char **argv, char **envp)
 	char	*str;
 	char	**env;
 	char	prompt[100];
-	// int exit_code;
+	int exit_code;
 
 	(void)argc;
 	(void)argv;
+	exit_code = 0;
 	env = copy_env(envp); // minisehll a sa propre copie du env pour le modifier (export, unset, etc)
 	if (!env)
 		return (1);
@@ -115,8 +114,8 @@ int	main(int argc, char **argv, char **envp)
 			cmds = parser(tokens);
 			if (cmds)
 			{
-				expand_cmds(cmds, 0, env);
-				exec(cmds, env);
+				expand_cmds(cmds, exit_code, env);
+				exit_code = exec(cmds, env);
 				// display_cmds(cmds);
 				free_cmds(&cmds);
 			}
