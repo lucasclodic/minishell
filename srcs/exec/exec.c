@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 18:35:05 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/03/30 15:45:15 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/03/30 18:17:37 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,10 +212,30 @@ int open_redirs_out(t_node *redirs, t_data *data)
 	return (0);
 }
 
+int execute_builtin(t_cmd *cmd, char **envp, t_data data)
+{
+	if (dup2(data.infd, 0) == -1)
+	{
+		close(data.infd);
+		free(data.pid);
+		freee_cmds(cmd);
+		free_perror_exit("dup2", data);
+	}
+	if (dup2(data.outfd, 1) == -1)
+	{
+		close(data.outfd);
+		free(data.pid);
+		freee_cmds(cmd);
+		free_perror_exit("dup2", data);
+	}
+	return(exec_builtin(cmd, &envp));
+}
+
 int	exec(t_cmd *cmds, char **envp)
 {
 	t_data	data;
 	t_cmd *cmd;
+	int	exit_c;
 
 	cmd = cmds;
 	data.i = 0;
@@ -226,7 +246,7 @@ int	exec(t_cmd *cmds, char **envp)
 	if (!data.pid)
 	{
 		perror("malloc");
-		freee_cmds(cmds);
+		// freee_cmds(cmds);
 		return (1);
 	}
 	while (cmd)
@@ -236,17 +256,24 @@ int	exec(t_cmd *cmds, char **envp)
 		if (data.infd == -1)//data.infd = open("/dev/null", O_RDONLY)
 		{
 			free(data.pid);
-			freee_cmds(cmds);//free plus tard
+			// freee_cmds(cmds);
 			return (1);
 		}
 		open_redirs_out(cmd->redirs, &data);
 		if (data.outfd == -1)
 		{
 			free(data.pid);
-			freee_cmds(cmds);
+			// freee_cmds(cmds);
 			return (1);
 		}
-		fork_child(cmd, &data, envp);
+		if (is_builtin(cmd->args[0]))
+		{
+			exit_c = execute_builtin(cmd, envp, data);
+			if (!cmd->next)
+				return (exit_c);
+		}
+		else
+			fork_child(cmd, &data, envp);
 		if (data.infd > 2)
 			close(data.infd);
 		if (data.outfd > 2)

@@ -6,14 +6,13 @@
 #    By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/19 17:09:08 by lucas             #+#    #+#              #
-#    Updated: 2026/03/30 13:57:16 by mnicolas         ###   ########.fr        #
+#    Updated: 2026/03/30 17:11:54 by mnicolas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 

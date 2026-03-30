@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:08:58 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/30 15:54:00 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/03/30 18:21:13 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,44 @@
 // 	}
 // }
 
+void build_prompt(char *buf)
+{
+    char	cwd[50];
+	size_t	len;
+	size_t	i;
+	char	*ms;
+
+	len = 0;
+	i = 0;
+	ms = "minishell> ";
+    if (!getcwd(cwd, sizeof(cwd)))
+    {
+        buf[0] = '\0';
+    }
+	while (cwd[i])
+	{
+		buf[len++] = cwd[i];
+		i++;
+	}
+	i = 0;
+	buf[len++] = ' ';
+	buf[len++] = '$';
+	buf[len++] = ' ';
+	while (ms[i])
+	{
+		buf[len++] = ms[i];
+		i++;
+	}
+	buf[len] = '\0';
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_node	*tokens;
 	t_cmd	*cmds;
 	char	*str;
 	char	**env;
+	char	prompt[100];
 	// int exit_code;
 
 	(void)argc;
@@ -63,7 +95,8 @@ int	main(int argc, char **argv, char **envp)
 		// On active les signaux du mode interactif AVANT readline pour que ctrl-C affiche un nouveau propmpt
 		if (isatty(STDIN_FILENO))
 			setup_signals_interactive();
-		str = readline("minishell> ");
+		build_prompt(prompt);
+		str = readline(prompt);
 		if (!str) // ctrl-D → readline retourne NULL → on quitte proprement
 		{
 			if (g_signal)  // interrupted by Ctrl-C
@@ -83,7 +116,7 @@ int	main(int argc, char **argv, char **envp)
 			if (cmds)
 			{
 				expand_cmds(cmds, 0, env);
-				exec(cmds, envp);
+				exec(cmds, env);
 				// display_cmds(cmds);
 				free_cmds(&cmds);
 			}
