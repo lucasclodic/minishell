@@ -128,25 +128,14 @@ typedef struct s_data
 	int 	here_doc;
 }	t_data;
 
-char	*free_and_null(char **buf, char *s, char *t);
-char	*readfile(int fd, ssize_t *bytes);
-char	*end(char **buffer, ssize_t *bytes);
-char	*line(char **buffer);
 void	*free_words(char **words);
-size_t	len(const char *s);
 void	work_child(t_cmd *cmd, char **envp, t_data data);
 int		wait_and_return(t_data data);
-void	perror_exit(char *str);
 int		fork_child(t_cmd *cmd, t_data *data, char **envp);
-char	*search_path(char **paths, char **cmd);
-char	*get_full_path(char **paths, char **cmd, int i);
-char	*get_path(char **envp, char **cmd);
 void	cmd_not_found(char *str);
 void	free_and_exit(t_cmd *cmd, int exit_code);
 void	execute(t_cmd *cmds, char **envp, t_data data);
 void	free_perror_exit(char *str, t_data data);
-void	freee_one_cmd(t_cmd *cmd);
-void	freee_cmds(t_cmd *cmds);
 int		exec(t_cmd *cmds, char **envp);
 
 #endif

@@ -20,7 +20,7 @@ void	cmd_not_found(char *str)
 
 void	free_and_exit(t_cmd *cmd, int exit_code)
 {
-	freee_cmds(cmd);
+	free_cmds(&cmd);
 	exit(exit_code);
 }
 

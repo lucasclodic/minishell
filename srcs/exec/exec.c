@@ -3,49 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 18:35:05 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/03/30 18:17:37 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/03/31 11:31:28 by lucas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-void freee_one_cmd(t_cmd *cmd)
-{
-	int	i;
-
-	if (cmd->args)
-	{
-		i = 0;
-		while (cmd->args[i])
-		{
-			free(cmd->args[i]);
-			i++;
-		}
-		free(cmd->args);
-	}
-	if (cmd->redirs)
-		clean_struct(&cmd->redirs);
-	free(cmd);
-}
-
-void	freee_cmds(t_cmd *cmds)
-{
-	t_cmd	*temp;
-	t_cmd	*current;
-
-	if (!cmds)
-		return ;
-	current = cmds;
-	while (current)
-	{
-		temp = current->next;
-		freee_one_cmd(current);
-		current = temp;
-	}
-}
 
 void	work_child(t_cmd *cmd, char **envp, t_data data)
 {
@@ -53,14 +18,14 @@ void	work_child(t_cmd *cmd, char **envp, t_data data)
 	{
 		close(data.infd);
 		free(data.pid);
-		freee_cmds(cmd);
+		free_cmds(&cmd);
 		free_perror_exit("dup2", data);
 	}
 	if (dup2(data.outfd, 1) == -1)
 	{
 		close(data.outfd);
 		free(data.pid);
-		freee_cmds(cmd);
+		free_cmds(&cmd);
 		free_perror_exit("dup2", data);
 	}
 	if (data.infd > 2)
@@ -218,14 +183,14 @@ int execute_builtin(t_cmd *cmd, char **envp, t_data data)
 	{
 		close(data.infd);
 		free(data.pid);
-		freee_cmds(cmd);
+		free_cmds(&cmd);
 		free_perror_exit("dup2", data);
 	}
 	if (dup2(data.outfd, 1) == -1)
 	{
 		close(data.outfd);
 		free(data.pid);
-		freee_cmds(cmd);
+		free_cmds(&cmd);
 		free_perror_exit("dup2", data);
 	}
 	return(exec_builtin(cmd, &envp));
@@ -246,24 +211,24 @@ int	exec(t_cmd *cmds, char **envp)
 	if (!data.pid)
 	{
 		perror("malloc");
-		// freee_cmds(cmds);
+		free_cmds(&cmds);
 		return (1);
 	}
 	while (cmd)
 	{
 		setup_signals_ignore();
 		open_redirs_in(cmd->redirs, &data);
-		if (data.infd == -1)//data.infd = open("/dev/null", O_RDONLY)
+		if (data.infd == -1) //data.infd = open("/dev/null", O_RDONLY)
 		{
 			free(data.pid);
-			// freee_cmds(cmds);
+			free_cmds(&cmds);
 			return (1);
 		}
 		open_redirs_out(cmd->redirs, &data);
 		if (data.outfd == -1)
 		{
 			free(data.pid);
-			// freee_cmds(cmds);
+			free_cmds(&cmds);
 			return (1);
 		}
 		if (is_builtin(cmd->args[0]))
