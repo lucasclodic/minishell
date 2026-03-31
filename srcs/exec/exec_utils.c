@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 17:26:16 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/03/30 15:46:34 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/03/31 16:58:21 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,28 +47,9 @@ void	free_perror_exit(char *str, t_data data)
 	exit(1);
 }
 
-int	wait_and_return(t_data data)
+int free_perror_return(char *str)
 {
-	int	i;
-	int	status;
-	int	exit_code;
-
-	i = 0;
-	while (i < data.cmd_count)
-	{
-		waitpid(data.pid[i], &status, 0);
-		if (i == data.cmd_count - 1)
-		{
-			setup_signals_interactive();
-			if (WIFEXITED(status))
-				exit_code = (WEXITSTATUS(status));
-			else if (WIFSIGNALED(status))
-				exit_code = (128 + WTERMSIG(status));
-			else
-				exit_code = 1;
-		}
-		i++;
-	}
-	free(data.pid);
-	return (exit_code);
+	perror(str);
+	return (-1);
 }
+

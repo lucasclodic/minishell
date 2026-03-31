@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 18:35:05 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/03/31 11:31:28 by lucas            ###   ########.fr       */
+/*   Updated: 2026/03/31 18:17:16 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,12 @@
 
 void	work_child(t_cmd *cmd, char **envp, t_data data)
 {
-	if (dup2(data.infd, 0) == -1)
+	if (dup2(data.infd, 0) == -1 || dup2(data.outfd, 1) == -1)
 	{
-		close(data.infd);
-		free(data.pid);
-		free_cmds(&cmd);
-		free_perror_exit("dup2", data);
-	}
-	if (dup2(data.outfd, 1) == -1)
-	{
-		close(data.outfd);
-		free(data.pid);
+		if (data.infd > 2)
+			close(data.infd);
+		if (data.outfd > 2)
+			close(data.outfd);
 		free_cmds(&cmd);
 		free_perror_exit("dup2", data);
 	}
@@ -51,156 +46,49 @@ int	fork_child(t_cmd *cmd, t_data *data, char **envp)
 	return (0);
 }
 
-int	count_cmds(t_cmd *cmds)
-{
-	int i;
-	t_cmd *tmp;
-
-	tmp = cmds;
-	i = 0;
-	while(tmp)
-	{
-		tmp = tmp->next;
-		i++;
-	}
-	return (i);
-}
-
-int	ft_strcmp(const char *s1, const char *s2)
-{
-	size_t	i;
-
-	i = 0;
-	while (s1[i] == s2[i] && s1[i] != '\0')
-		i++;
-	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-}
-
-void	get_lines(char *delim, t_data *data)
-{
-	char	*line;
-
-	line = readline("> ");
-	while (line && ft_strcmp(line, delim) != 0) //if !line
-	{
-		write(data->pipefd[1], line, strlen(line));
-		write(data->pipefd[1], "\n", 1);
-		free(line);
-		line = readline("> ");
-	}
-	free(line);
-	close(data->pipefd[1]);
-}
-
-int open_redirs_in(t_node *redirs, t_data *data)
-{
-	if (!redirs && data->infd != -2)
-		return (0);
-	while(redirs && (redirs->type == REDIR_IN || redirs->type == HEREDOC))
-	{
-		if (data->here_doc == 1)
-		{
-			close(data->pipefd[0]);
-			data->here_doc = 0;
-		}
-		if (data->infd != -2)
-			close(data->infd);
-		if (redirs->type == REDIR_IN)
-		{
-			data->infd = open(redirs->str, O_RDONLY);
-			if (data->infd == -1)
-			{
-				perror(redirs->str);
-				return (-1);
-			}
-		}
-		else if (redirs->type == HEREDOC)
-		{
-			setup_signals_interactive();
-			if (pipe(data->pipefd) == -1)
-			{
-				perror("pipe");
-				return(-1);
-			}
-			get_lines(redirs->str, data);
-			data->here_doc = 1;
-			setup_signals_ignore();
-		}
-		redirs = redirs->next;
-	}
-	if (data->here_doc == 1)
-	{
-		data->infd = data->pipefd[0];
-		data->here_doc = 0;
-	}
-	if (data->infd == -2)
-		data->infd = 0;
-	return (0);
-}
-
-int open_redirs_out(t_node *redirs, t_data *data)
-{
-	data->outfd = -2;
-	while (redirs && (redirs->type == REDIR_IN || redirs->type == HEREDOC))
-		redirs = redirs->next;
-	if (!redirs)
-	{
-		if (data->i == data->cmd_count - 1)
-			data->outfd = 1;
-		else
-		{
-			if (pipe(data->pipefd) == -1)
-			{
-				perror("pipe");
-				return(-1);
-			}
-			data->outfd = data->pipefd[1];
-		}
-	}
-	while (redirs && (redirs->type == REDIR_OUT || redirs->type == APPEND))
-	{
-		if (data->outfd != -2)
-			close(data->outfd);
-		if (redirs->type == APPEND)
-			data->outfd = open(redirs->str,
-					O_WRONLY | O_APPEND | O_CREAT, 0644);
-		else if (redirs->type == REDIR_OUT)
-			data->outfd = open(redirs->str,
-					O_WRONLY | O_TRUNC | O_CREAT, 0644);
-		if (data->outfd == -1)
-		{
-			perror(redirs->str);
-			return(-1);
-		}
-		redirs = redirs->next;
-	}
-	return (0);
-}
-
 int execute_builtin(t_cmd *cmd, char **envp, t_data data)
 {
-	if (dup2(data.infd, 0) == -1)
+	int exit_c;
+	int stdin_backup;
+    int stdout_backup;
+
+	setup_signals_interactive();
+	stdin_backup = dup(0);
+    stdout_backup = dup(1);
+	if (stdin_backup == -1 || stdout_backup == -1)
 	{
-		close(data.infd);
-		free(data.pid);
-		free_cmds(&cmd);
-		free_perror_exit("dup2", data);
+		close(stdin_backup);
+		close(stdout_backup);
+		free_perror_return("dup");
 	}
-	if (dup2(data.outfd, 1) == -1)
+	if (dup2(data.infd, 0) == -1 || (dup2(data.outfd, 1) == -1))
 	{
-		close(data.outfd);
-		free(data.pid);
-		free_cmds(&cmd);
-		free_perror_exit("dup2", data);
+		if (data.infd > 2)
+			close(data.infd);
+		if (data.outfd > 2)
+			close(data.outfd);
+		close(stdin_backup);
+		close(stdout_backup);
+		free_perror_return("dup2");
 	}
-	return(exec_builtin(cmd, &envp));
+	exit_c = exec_builtin(cmd, &envp);
+	dup2(stdin_backup, 0);
+    dup2(stdout_backup, 1);
+	close(stdin_backup);
+	close(stdout_backup);
+	if (g_signal == SIGINT)
+	{
+		g_signal = 0;
+		return (130);
+	}
+	return (exit_c);
 }
 
 int	exec(t_cmd *cmds, char **envp)
 {
 	t_data	data;
 	t_cmd *cmd;
-	int	exit_c;
+	int open_code;
 
 	cmd = cmds;
 	data.i = 0;
@@ -211,40 +99,69 @@ int	exec(t_cmd *cmds, char **envp)
 	if (!data.pid)
 	{
 		perror("malloc");
-		free_cmds(&cmds);
 		return (1);
 	}
 	while (cmd)
 	{
 		setup_signals_ignore();
-		open_redirs_in(cmd->redirs, &data);
-		if (data.infd == -1) //data.infd = open("/dev/null", O_RDONLY)
+		open_code = open_redirs_in(cmd->redirs, &data);
+		if (open_code == -1)
+		{
+			if (data.infd != -1)
+			{
+				if (data.infd > 2)
+					close(data.infd);
+				if (data.outfd > 2)
+					close(data.outfd);
+				free(data.pid);
+				setup_signals_interactive();
+				return (1);
+			}
+			data.infd = open("/dev/null", O_RDONLY);
+			if (data.infd == -1)
+			{
+				if (data.infd > 2)
+					close(data.infd);
+				if (data.outfd > 2)
+					close(data.outfd);
+				perror("/dev/null");
+				free(data.pid);
+				setup_signals_interactive();
+				return (1);
+			}
+		}
+		else if (open_code == 130)
+		{
+			if (data.infd > 2)
+				close(data.infd);
+			if (data.outfd > 2)
+				close(data.outfd);
+			free(data.pid);
+			return (130);
+		}
+		if (open_redirs_out(cmd->redirs, &data) == -1)
 		{
 			free(data.pid);
-			free_cmds(&cmds);
+			setup_signals_interactive();
 			return (1);
 		}
-		open_redirs_out(cmd->redirs, &data);
-		if (data.outfd == -1)
+		if (is_builtin(cmd->args[0]) && data.cmd_count == 1)
 		{
 			free(data.pid);
-			free_cmds(&cmds);
-			return (1);
-		}
-		if (is_builtin(cmd->args[0]))
-		{
-			exit_c = execute_builtin(cmd, envp, data);
-			if (!cmd->next)
-				return (exit_c);
+			return(execute_builtin(cmd, envp, data));
 		}
 		else
-			fork_child(cmd, &data, envp);
+		{
+			if (fork_child(cmd, &data, envp) == -1)
+			{
+				free(data.pid);
+				return (-1);
+			}
+		}
 		if (data.infd > 2)
 			close(data.infd);
 		if (data.outfd > 2)
 			close(data.outfd);
-		if (data.i != data.cmd_count - 1)//!cmd->next
-			data.infd = data.pipefd[0];
 		data.i++;
 		cmd = cmd->next;
 	}

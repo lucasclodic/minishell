@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_cmd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 09:27:43 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/03/31 11:15:45 by lucas            ###   ########.fr       */
+/*   Updated: 2026/03/31 13:25:35 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,12 @@ char	*get_pathh(char **envp, t_cmd *cmds)
 
 	i = 0;
 	cmd = cmds->args;
+	if (!envp)
+	{
+		cmd_not_found(cmd[0]);
+		free_cmds(&cmds);
+		exit(127);
+	}
 	while (envp[i])
 	{
 		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
@@ -115,8 +121,15 @@ void	execute(t_cmd *cmds, char **envp, t_data data)
 {
 	char	**paths;
 	char	*path;
+	int 	exit_c;
 
 	free(data.pid);
+	if (is_builtin(cmds->args[0]))
+	{
+		exit_c = exec_builtin(cmds, &envp);
+		free_cmds(&cmds);
+		exit(exit_c);
+	}
 	if (ft_strchr(cmds->args[0], '/'))
 		execc(cmds->args[0], cmds, envp, 0);
 	paths = ft_split(get_pathh(envp, cmds), ':');

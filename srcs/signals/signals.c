@@ -53,15 +53,21 @@ void	setup_signals_interactive(void)
 	struct sigaction	sa_int;
 	struct sigaction	sa_quit;
 
-	sa_int.sa_handler = handle_sigint;
-	sa_int.sa_flags = 0;
-	sigemptyset(&sa_int.sa_mask);
-	sigaction(SIGINT, &sa_int, NULL);
-	sa_quit.sa_handler = SIG_IGN;
-	sa_quit.sa_flags = 0;
-	sigemptyset(&sa_quit.sa_mask);
-	sigaction(SIGQUIT, &sa_quit, NULL);
+	if (isatty(STDIN_FILENO))
+	{
+		sa_int.sa_handler = handle_sigint;
+		sa_int.sa_flags = 0;
+		sigemptyset(&sa_int.sa_mask);
+		sigaction(SIGINT, &sa_int, NULL);
+		sa_quit.sa_handler = SIG_IGN;
+		sa_quit.sa_flags = 0;
+		sigemptyset(&sa_quit.sa_mask);
+		sigaction(SIGQUIT, &sa_quit, NULL);
+	}
+	else
+		setup_signals_default();
 }
+
 
 // Pour l'exec : quand une commande tourne dans un fork.
 // On remet les signaux par defaut (SIG_DFL) pour que :

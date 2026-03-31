@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:09:02 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/30 15:08:47 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/03/31 18:16:21 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int		is_builtin(char *cmd);
 int		exec_builtin(t_cmd *cmd, char ***env);
 
 // ======== signals/signals.c ========
-extern volatile sig_atomic_t	g_signal;
+extern volatile	sig_atomic_t	g_signal;
 void	setup_signals_interactive(void);
 void	setup_signals_default(void);
 void	setup_signals_ignore(void);
@@ -129,6 +129,7 @@ typedef struct s_data
 }	t_data;
 
 void	*free_words(char **words);
+int		free_perror_return(char *str);
 void	work_child(t_cmd *cmd, char **envp, t_data data);
 int		wait_and_return(t_data data);
 int		fork_child(t_cmd *cmd, t_data *data, char **envp);
@@ -137,5 +138,11 @@ void	free_and_exit(t_cmd *cmd, int exit_code);
 void	execute(t_cmd *cmds, char **envp, t_data data);
 void	free_perror_exit(char *str, t_data data);
 int		exec(t_cmd *cmds, char **envp);
+int 	open_redirs_in(t_node *redirs, t_data *data);
+int		open_redirs_out(t_node *redirs, t_data *data);
+int		ft_strcmp(const char *s1, const char *s2);
+int		get_lines(char *delim, t_data *data);
+int		count_cmds(t_cmd *cmds);
+
 
 #endif

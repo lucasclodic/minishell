@@ -6,7 +6,7 @@
 #    By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/19 17:09:08 by lucas             #+#    #+#              #
-#    Updated: 2026/03/30 17:11:54 by mnicolas         ###   ########.fr        #
+#    Updated: 2026/03/31 18:16:39 by mnicolas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ SRCS =	srcs/minishell.c\
 		builtins/echo.c builtins/cd.c builtins/pwd.c\
 		builtins/export.c builtins/unset.c builtins/env.c\
 		builtins/exit.c\
-		srcs/exec/exec.c execute_cmd.c exec_utils.c
+		exec.c execute_cmd.c exec_utils.c exec_utils2.c redirs.c
 
 OBJ_DIR = obj
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
