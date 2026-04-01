@@ -65,7 +65,7 @@ void	setup_signals_interactive(void)
 		sigaction(SIGQUIT, &sa_quit, NULL);
 	}
 	else
-		setup_signals_default();
+	setup_signals_default();
 }
 
 

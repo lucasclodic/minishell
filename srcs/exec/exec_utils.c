@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/06 17:26:16 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/03/31 16:58:21 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/01 13:09:18 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,8 @@ void	free_perror_exit(char *str, t_data data)
 	exit(1);
 }
 
-int free_perror_return(char *str)
+int	free_perror_return(char *str)
 {
 	perror(str);
 	return (-1);
 }
-

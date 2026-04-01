@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 14:25:12 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/03/31 17:49:36 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/01 13:08:53 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,69 +22,42 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
-// int	get_lines(char *delim, t_data *data)
-// {
-// 	char	*line;
-
-// 	line = readline("> ");
-// 	while (line && ft_strcmp(line, delim) != 0) //if !line
-// 	{
-// 		if (g_signal == SIGINT)
-// 		{
-// 			g_signal = 0;
-// 			free(line);
-// 			close(data->pipefd[0]);
-// 			close(data->pipefd[1]);
-// 			return (130);
-// 		}
-// 		write(data->pipefd[1], line, strlen(line));
-// 		write(data->pipefd[1], "\n", 1);
-// 		free(line);
-// 		line = readline("> ");
-// 	}
-// 	free(line);
-// 	close(data->pipefd[1]);
-// 	return (0);
-// }
-
-int get_lines(char *delim, t_data *data)
+int	get_lines(char *delim, t_data *data)
 {
-    char *line;
+	char	*line;
 
-    while (1)
-    {
-        line = readline("> ");
-        if (g_signal == SIGINT)
-        {
-            g_signal = 0;
-            free(line);
-            close(data->pipefd[0]);
-            close(data->pipefd[1]);
-            return (130);
-        }
-        if (!line || ft_strcmp(line, delim) == 0)
-        {
-            free(line);
-            break;
-        }
-
-        write(data->pipefd[1], line, strlen(line));
-        write(data->pipefd[1], "\n", 1);
-        free(line);
-    }
-
-    close(data->pipefd[1]);
-    return (0);
+	while (1)
+	{
+		line = readline("> ");
+		if (g_signal == SIGINT)
+		{
+			g_signal = 0;
+			free(line);
+			close(data->pipefd[0]);
+			close(data->pipefd[1]);
+			return (130);
+		}
+		if (!line || ft_strcmp(line, delim) == 0)
+		{
+			free(line);
+			break ;
+		}
+		write(data->pipefd[1], line, strlen(line));
+		write(data->pipefd[1], "\n", 1);
+		free(line);
+	}
+	close(data->pipefd[1]);
+	return (0);
 }
 
 int	count_cmds(t_cmd *cmds)
 {
-	int i;
-	t_cmd *tmp;
+	int		i;
+	t_cmd	*tmp;
 
 	tmp = cmds;
 	i = 0;
-	while(tmp)
+	while (tmp)
 	{
 		tmp = tmp->next;
 		i++;

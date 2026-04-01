@@ -6,17 +6,17 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 14:37:29 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/03/31 18:08:21 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/01 13:03:15 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int open_redirs_in(t_node *redirs, t_data *data)
+int	open_redirs_in(t_node *redirs, t_data *data)
 {
 	if (!redirs && data->infd != -2)
 		data->infd = data->pipefd[0];
-	while(redirs && (redirs->type == REDIR_IN || redirs->type == HEREDOC))
+	while (redirs && (redirs->type == REDIR_IN || redirs->type == HEREDOC))
 	{
 		if (data->here_doc == 1)
 		{
@@ -40,7 +40,7 @@ int open_redirs_in(t_node *redirs, t_data *data)
 			if (pipe(data->pipefd) == -1)
 			{
 				perror("pipe");
-				return(-1);
+				return (-1);
 			}
 			if (get_lines(redirs->str, data) == 130)
 				return (130);
@@ -59,7 +59,7 @@ int open_redirs_in(t_node *redirs, t_data *data)
 	return (0);
 }
 
-int open_redirs_out(t_node *redirs, t_data *data)
+int	open_redirs_out(t_node *redirs, t_data *data)
 {
 	data->outfd = -2;
 	while (redirs && (redirs->type == REDIR_IN || redirs->type == HEREDOC))
@@ -73,7 +73,7 @@ int open_redirs_out(t_node *redirs, t_data *data)
 			if (pipe(data->pipefd) == -1)
 			{
 				perror("pipe");
-				return(-1);
+				return (-1);
 			}
 			data->outfd = data->pipefd[1];
 		}
@@ -91,7 +91,7 @@ int open_redirs_out(t_node *redirs, t_data *data)
 		if (data->outfd == -1)
 		{
 			perror(redirs->str);
-			return(-1);
+			return (-1);
 		}
 		redirs = redirs->next;
 	}

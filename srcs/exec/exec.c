@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 18:35:05 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/03/31 18:17:16 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/01 13:02:11 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,15 @@ int	fork_child(t_cmd *cmd, t_data *data, char **envp)
 	return (0);
 }
 
-int execute_builtin(t_cmd *cmd, char **envp, t_data data)
+int	execute_builtin(t_cmd *cmd, char **envp, t_data data)
 {
-	int exit_c;
-	int stdin_backup;
-    int stdout_backup;
+	int	exit_c;
+	int	stdin_backup;
+	int	stdout_backup;
 
 	setup_signals_interactive();
 	stdin_backup = dup(0);
-    stdout_backup = dup(1);
+	stdout_backup = dup(1);
 	if (stdin_backup == -1 || stdout_backup == -1)
 	{
 		close(stdin_backup);
@@ -73,7 +73,7 @@ int execute_builtin(t_cmd *cmd, char **envp, t_data data)
 	}
 	exit_c = exec_builtin(cmd, &envp);
 	dup2(stdin_backup, 0);
-    dup2(stdout_backup, 1);
+	dup2(stdout_backup, 1);
 	close(stdin_backup);
 	close(stdout_backup);
 	if (g_signal == SIGINT)
@@ -87,8 +87,8 @@ int execute_builtin(t_cmd *cmd, char **envp, t_data data)
 int	exec(t_cmd *cmds, char **envp)
 {
 	t_data	data;
-	t_cmd *cmd;
-	int open_code;
+	t_cmd	*cmd;
+	int		open_code;
 
 	cmd = cmds;
 	data.i = 0;
@@ -148,7 +148,7 @@ int	exec(t_cmd *cmds, char **envp)
 		if (is_builtin(cmd->args[0]) && data.cmd_count == 1)
 		{
 			free(data.pid);
-			return(execute_builtin(cmd, envp, data));
+			return (execute_builtin(cmd, envp, data));
 		}
 		else
 		{

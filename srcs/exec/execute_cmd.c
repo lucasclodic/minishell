@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 09:27:43 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/03/31 13:25:35 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/01 13:06:38 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 char	*get_pathh(char **envp, t_cmd *cmds)
 {
-	int	i;
-	char **cmd;
+	int		i;
+	char	**cmd;
 
 	i = 0;
 	cmd = cmds->args;
@@ -40,7 +40,7 @@ char	*get_full_pathh(char **paths, t_cmd *cmds, int i)
 {
 	char	*tmp;
 	char	*full_path;
-	char 	**cmd;
+	char	**cmd;
 
 	cmd = cmds->args;
 	tmp = ft_strjoin(paths[i], "/");
@@ -65,7 +65,7 @@ char	*search_pathh(char **paths, t_cmd *cmds)
 {
 	int		i;
 	char	*full_path;
-	char **cmd;
+	char	**cmd;
 
 	i = 0;
 	cmd = cmds->args;
@@ -86,10 +86,9 @@ char	*search_pathh(char **paths, t_cmd *cmds)
 	exit(127);
 }
 
-
 void	execc(char *path, t_cmd *cmds, char **envp, int mode)
 {
-	char **cmd;
+	char	**cmd;
 
 	cmd = cmds->args;
 	if (execve(path, cmd, envp) == -1)
@@ -121,7 +120,7 @@ void	execute(t_cmd *cmds, char **envp, t_data data)
 {
 	char	**paths;
 	char	*path;
-	int 	exit_c;
+	int		exit_c;
 
 	free(data.pid);
 	if (is_builtin(cmds->args[0]))
