@@ -1,4 +1,1 @@
-a
-a
-a
-a
+echo "nono" | sleep 10

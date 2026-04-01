@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:08:58 by lucas             #+#    #+#             */
-/*   Updated: 2026/04/01 12:54:25 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/01 17:33:42 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,8 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	while (1)
 	{
-		setup_signals_interactive();
 		// On active les signaux du mode interactif AVANT readline pour que ctrl-C affiche un nouveau propmpt
+		setup_signals_interactive();
 		build_prompt(prompt);
 		str = readline(prompt);
 		if (!str) // ctrl-D → readline retourne NULL → on quitte proprement
@@ -115,6 +115,11 @@ int	main(int argc, char **argv, char **envp)
 			{
 				expand_cmds(cmds, exit_code, env);
 				exit_code = exec(cmds, env);
+				if (exit_code == 130 && !isatty(STDIN_FILENO))
+				{
+					write(1, "\n", 1);
+					return (130);
+				}
 				// display_cmds(cmds);
 				free_cmds(&cmds);
 			}
