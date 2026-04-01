@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 18:35:05 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/04/01 13:02:11 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/01 15:42:23 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,20 +56,11 @@ int	execute_builtin(t_cmd *cmd, char **envp, t_data data)
 	stdin_backup = dup(0);
 	stdout_backup = dup(1);
 	if (stdin_backup == -1 || stdout_backup == -1)
-	{
-		close(stdin_backup);
-		close(stdout_backup);
-		free_perror_return("dup");
-	}
+		close_backup_and_return(stdin_backup, stdout_backup, "dup");
 	if (dup2(data.infd, 0) == -1 || (dup2(data.outfd, 1) == -1))
 	{
-		if (data.infd > 2)
-			close(data.infd);
-		if (data.outfd > 2)
-			close(data.outfd);
-		close(stdin_backup);
-		close(stdout_backup);
-		free_perror_return("dup2");
+		close_in_out(data.infd, data.outfd);
+		close_backup_and_return(stdin_backup, stdout_backup, "dup2");
 	}
 	exit_c = exec_builtin(cmd, &envp);
 	dup2(stdin_backup, 0);
@@ -84,84 +75,29 @@ int	execute_builtin(t_cmd *cmd, char **envp, t_data data)
 	return (exit_c);
 }
 
-int	exec(t_cmd *cmds, char **envp)
+int	exec(t_cmd *cmd, char **envp)
 {
 	t_data	data;
-	t_cmd	*cmd;
-	int		open_code;
 
-	cmd = cmds;
-	data.i = 0;
-	data.infd = -2;
-	data.here_doc = 0;
-	data.cmd_count = count_cmds(cmd);
-	data.pid = malloc(data.cmd_count * sizeof(pid_t));
-	if (!data.pid)
-	{
-		perror("malloc");
-		return (1);
-	}
+	data.data_code = init_data(&data, cmd);
+	if (data.data_code != 0)
+		return (data.data_code);
 	while (cmd)
 	{
 		setup_signals_ignore();
-		open_code = open_redirs_in(cmd->redirs, &data);
-		if (open_code == -1)
-		{
-			if (data.infd != -1)
-			{
-				if (data.infd > 2)
-					close(data.infd);
-				if (data.outfd > 2)
-					close(data.outfd);
-				free(data.pid);
-				setup_signals_interactive();
-				return (1);
-			}
-			data.infd = open("/dev/null", O_RDONLY);
-			if (data.infd == -1)
-			{
-				if (data.infd > 2)
-					close(data.infd);
-				if (data.outfd > 2)
-					close(data.outfd);
-				perror("/dev/null");
-				free(data.pid);
-				setup_signals_interactive();
-				return (1);
-			}
-		}
-		else if (open_code == 130)
-		{
-			if (data.infd > 2)
-				close(data.infd);
-			if (data.outfd > 2)
-				close(data.outfd);
-			free(data.pid);
-			return (130);
-		}
+		data.open_code = open_and_error(&data, cmd);
+		if (data.open_code != 0)
+			return (data.open_code);
 		if (open_redirs_out(cmd->redirs, &data) == -1)
-		{
-			free(data.pid);
-			setup_signals_interactive();
-			return (1);
-		}
-		if (is_builtin(cmd->args[0]) && data.cmd_count == 1)
+			return (free_pid_return(1, data.pid));
+		if (data.cmd_count == 1 && is_builtin(cmd->args[0]))
 		{
 			free(data.pid);
 			return (execute_builtin(cmd, envp, data));
 		}
-		else
-		{
-			if (fork_child(cmd, &data, envp) == -1)
-			{
-				free(data.pid);
-				return (-1);
-			}
-		}
-		if (data.infd > 2)
-			close(data.infd);
-		if (data.outfd > 2)
-			close(data.outfd);
+		if (fork_child(cmd, &data, envp) == -1)
+			return (free_pid_return(1, data.pid));
+		close_in_out(data.infd, data.outfd);
 		data.i++;
 		cmd = cmd->next;
 	}

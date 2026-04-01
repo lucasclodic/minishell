@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:09:02 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/31 18:16:21 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/01 15:43:48 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,9 @@ typedef struct s_data
 	int		i;
 	pid_t	*pid;
 	int 	here_doc;
+	int		open_code;
+	int		data_code;
+	int		here_doc_code;
 }	t_data;
 
 void	*free_words(char **words);
@@ -143,6 +146,11 @@ int		open_redirs_out(t_node *redirs, t_data *data);
 int		ft_strcmp(const char *s1, const char *s2);
 int		get_lines(char *delim, t_data *data);
 int		count_cmds(t_cmd *cmds);
-
+int 	free_pid_return(int code, pid_t *pid);
+int		open_and_error(t_data *data, t_cmd *cmd);
+int		init_data(t_data *data, t_cmd *cmd);
+void	close_backup_and_return(int stdin_backup, int stdout_backup, char *str);
+void	close_in_out(int infd, int outfd);
+void	execve_err_msg(char *cmd, int mode);
 
 #endif

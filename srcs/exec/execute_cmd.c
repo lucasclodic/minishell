@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 09:27:43 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/04/01 13:06:38 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:24:03 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,7 @@ void	execc(char *path, t_cmd *cmds, char **envp, int mode)
 			free(path);
 		if (errno == ENOENT)
 		{
-			if (mode == 0)
-				perror(cmd[0]);
-			else
-				cmd_not_found(cmd[0]);
+			execve_err_msg(cmd[0], mode);
 			free_and_exit(cmds, 127);
 		}
 		if (errno == EACCES)
@@ -108,10 +105,7 @@ void	execc(char *path, t_cmd *cmds, char **envp, int mode)
 			perror(cmd[0]);
 			free_and_exit(cmds, 126);
 		}
-		if (mode == 0)
-			perror(cmd[0]);
-		else
-			cmd_not_found(cmd[0]);
+		execve_err_msg(cmd[0], mode);
 		free_and_exit(cmds, 1);
 	}
 }

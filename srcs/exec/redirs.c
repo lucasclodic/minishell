@@ -6,11 +6,50 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 14:37:29 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/04/01 13:03:15 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/01 15:41:34 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+int	handle_here_doc(t_node *redirs, t_data *data)
+{
+	if (redirs->type == HEREDOC)
+	{
+		setup_signals_interactive();
+		if (pipe(data->pipefd) == -1)
+		{
+			perror("pipe");
+			return (-1);
+		}
+		if (get_lines(redirs->str, data) == 130)
+			return (130);
+		data->here_doc = 1;
+		setup_signals_ignore();
+	}
+	return (0);
+}
+
+int	close_and_handle_infile(t_node *redirs, t_data *data)
+{
+	if (data->here_doc == 1)
+	{
+		close(data->pipefd[0]);
+		data->here_doc = 0;
+	}
+	if (data->infd != -2)
+		close(data->infd);
+	if (redirs->type == REDIR_IN)
+	{
+		data->infd = open(redirs->str, O_RDONLY);
+		if (data->infd == -1)
+		{
+			perror(redirs->str);
+			return (-1);
+		}
+	}
+	return (0);
+}
 
 int	open_redirs_in(t_node *redirs, t_data *data)
 {
@@ -18,35 +57,11 @@ int	open_redirs_in(t_node *redirs, t_data *data)
 		data->infd = data->pipefd[0];
 	while (redirs && (redirs->type == REDIR_IN || redirs->type == HEREDOC))
 	{
-		if (data->here_doc == 1)
-		{
-			close(data->pipefd[0]);
-			data->here_doc = 0;
-		}
-		if (data->infd != -2)
-			close(data->infd);
-		if (redirs->type == REDIR_IN)
-		{
-			data->infd = open(redirs->str, O_RDONLY);
-			if (data->infd == -1)
-			{
-				perror(redirs->str);
-				return (-1);
-			}
-		}
-		else if (redirs->type == HEREDOC)
-		{
-			setup_signals_interactive();
-			if (pipe(data->pipefd) == -1)
-			{
-				perror("pipe");
-				return (-1);
-			}
-			if (get_lines(redirs->str, data) == 130)
-				return (130);
-			data->here_doc = 1;
-			setup_signals_ignore();
-		}
+		if (close_and_handle_infile(redirs, data) == -1)
+			return (-1);
+		data->here_doc_code = handle_here_doc(redirs, data);
+		if (data->here_doc_code != 0)
+			return (data->here_doc_code);
 		redirs = redirs->next;
 	}
 	if (data->here_doc == 1)
@@ -59,11 +74,8 @@ int	open_redirs_in(t_node *redirs, t_data *data)
 	return (0);
 }
 
-int	open_redirs_out(t_node *redirs, t_data *data)
+int	create_pipe(t_node *redirs, t_data *data)
 {
-	data->outfd = -2;
-	while (redirs && (redirs->type == REDIR_IN || redirs->type == HEREDOC))
-		redirs = redirs->next;
 	if (!redirs)
 	{
 		if (data->i == data->cmd_count - 1)
@@ -78,6 +90,16 @@ int	open_redirs_out(t_node *redirs, t_data *data)
 			data->outfd = data->pipefd[1];
 		}
 	}
+	return (0);
+}
+
+int	open_redirs_out(t_node *redirs, t_data *data)
+{
+	data->outfd = -2;
+	while (redirs && (redirs->type == REDIR_IN || redirs->type == HEREDOC))
+		redirs = redirs->next;
+	if (create_pipe(redirs, data) == -1)
+		return (-1);
 	while (redirs && (redirs->type == REDIR_OUT || redirs->type == APPEND))
 	{
 		if (data->outfd != -2)

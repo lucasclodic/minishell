@@ -6,7 +6,7 @@
 /*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 14:25:12 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/04/01 13:08:53 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/01 14:24:16 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,4 +89,12 @@ int	wait_and_return(t_data data)
 	}
 	free(data.pid);
 	return (exit_code);
+}
+
+void	execve_err_msg(char *cmd, int mode)
+{
+	if (mode == 0)
+		perror(cmd);
+	else
+		cmd_not_found(cmd);
 }
