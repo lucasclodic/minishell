@@ -132,4 +132,5 @@ int	main(int argc, char **argv, char **envp)
 		}
 		free(str);
 	}
+	return (exit_code);
 }
