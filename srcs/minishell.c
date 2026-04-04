@@ -115,10 +115,15 @@ int	main(int argc, char **argv, char **envp)
 			{
 				expand_cmds(cmds, exit_code, env);
 				exit_code = exec(cmds, env);
-				if (exit_code == 130 && !isatty(STDIN_FILENO))
+				if (!isatty(STDIN_FILENO))
 				{
-					write(1, "\n", 1);
-					return (130);
+					free_cmds(&cmds);
+					clean_struct(&tokens);
+					free(str);
+					//clean history
+					if (exit_code == 130)
+						write(1, "\n", 1);
+					return (exit_code);
 				}
 				// display_cmds(cmds);
 				free_cmds(&cmds);
