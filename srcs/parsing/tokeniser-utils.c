@@ -6,7 +6,7 @@
 /*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:08:45 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/26 10:32:48 by lucas            ###   ########.fr       */
+/*   Updated: 2026/04/07 18:13:07 by lucas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,27 +58,27 @@ int skip_word(char *str, int i)
 
 	while (str[i] && !is_space_or_operator(str[i]))
 	{
-		if (str[i] == '\'' || str[i] == '"')  // si tu tombes sur une quote tu dois avancer jusqu'à trouver la fin, une quote non fermée est une erreur 
+		if (str[i] == '\'' || str[i] == '"')  // si tu tombes sur une quote tu dois avancer jusqu'à trouver la fin, une quote non fermée est une erreur
 		{
-			type = str[i]; 
+			type = str[i];
 			i++;
 			while (str[i] && str[i] != type)
 				i++;
 			if (!str[i])
-                return (-1);
+				return (-1);
 			i++;
 		}
 		else
-			i++; 
+			i++;
 	}
 	return (i);
 }
 
 t_node *create_node(char * str, int start, int end)
 {
-	t_node *output; 
+	t_node *output;
 
-	output = malloc(sizeof(t_node) * 1); 
+	output = malloc(sizeof(t_node) * 1);
 	if (!output)
 		return (NULL);
 	output->str = ft_substr(str, start, end - start);
@@ -88,6 +88,6 @@ t_node *create_node(char * str, int start, int end)
 		return (NULL);
 	}
 	output->type = token_type_identifier(str, start);
-	output->next = NULL; 
+	output->next = NULL;
 	return (output);
 }

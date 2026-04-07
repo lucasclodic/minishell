@@ -3,47 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:08:58 by lucas             #+#    #+#             */
-/*   Updated: 2026/04/01 17:33:42 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/07 17:54:14 by lucas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-// static void	display_cmds(t_cmd *cmds)
-// {
-// 	int	i;
-// 	int	cmd_nb;
-
-// 	cmd_nb = 1;
-// 	while (cmds)
-// 	{
-// 		printf("=== CMD %d ===\n", cmd_nb);
-// 		if (cmds->args)
-// 		{
-// 			i = 0;
-// 			while (cmds->args[i])
-// 			{
-// 				printf("  arg[%d]: %s\n", i, cmds->args[i]);
-// 				i++;
-// 			}
-// 		}
-// 		if (cmds->redirs)
-// 		{
-// 			t_node *tmp = cmds->redirs;
-// 			printf("  redirs:\n");
-// 			while (tmp)
-// 			{
-// 				printf("    type=%d file=%s\n", tmp->type, tmp->str);
-// 				tmp = tmp->next;
-// 			}
-// 		}
-// 		cmds = cmds->next;
-// 		cmd_nb++;
-// 	}
-// }
 
 void build_prompt(char *buf)
 {
@@ -86,12 +53,11 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	exit_code = 0;
-	env = copy_env(envp); // minisehll a sa propre copie du env pour le modifier (export, unset, etc)
+	env = copy_env(envp);
 	if (!env)
 		return (1);
 	while (1)
 	{
-		// On active les signaux du mode interactif AVANT readline pour que ctrl-C affiche un nouveau propmpt
 		setup_signals_interactive();
 		build_prompt(prompt);
 		str = readline(prompt);

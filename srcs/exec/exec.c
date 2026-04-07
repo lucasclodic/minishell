@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 18:35:05 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/04/01 15:42:23 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/07 19:38:56 by lucas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,13 @@ int	execute_builtin(t_cmd *cmd, char **envp, t_data data)
 	return (exit_c);
 }
 
+void next_command(t_data *data, t_cmd **cmd)
+{
+	close_in_out(data->infd, data->outfd);
+	data->i++;
+	*cmd = (*cmd)->next;
+}
+
 int	exec(t_cmd *cmd, char **envp)
 {
 	t_data	data;
@@ -90,16 +97,14 @@ int	exec(t_cmd *cmd, char **envp)
 			return (data.open_code);
 		if (open_redirs_out(cmd->redirs, &data) == -1)
 			return (free_pid_return(1, data.pid));
-		if (data.cmd_count == 1 && is_builtin(cmd->args[0]))
+		if (cmd->args[0] && data.cmd_count == 1 && is_builtin(cmd->args[0]))
 		{
 			free(data.pid);
 			return (execute_builtin(cmd, envp, data));
 		}
-		if (fork_child(cmd, &data, envp) == -1)
+		if (cmd->args[0] && fork_child(cmd, &data, envp) == -1)
 			return (free_pid_return(1, data.pid));
-		close_in_out(data.infd, data.outfd);
-		data.i++;
-		cmd = cmd->next;
+		next_command(&data, &cmd);
 	}
 	return (wait_and_return(data));
 }
