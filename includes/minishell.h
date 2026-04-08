@@ -116,6 +116,10 @@ int		ft_unset(char **args, char ***env);
 int		ft_env(char **env);
 int		ft_exit(char **args);
 
+// ======== error.c ========
+void	syntax_error(char *token);
+void	print_error(char *cmd, char *arg, char *msg);
+
 // ======== exec ========
 typedef struct s_data
 {

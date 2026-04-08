@@ -60,7 +60,14 @@ int	main(int argc, char **argv, char **envp)
 	{
 		setup_signals_interactive();
 		build_prompt(prompt);
+		if (!isatty(STDIN_FILENO))
+			write(1, prompt, ft_strlen(prompt));
 		str = readline(prompt);
+		if (!isatty(STDIN_FILENO) && str)
+		{
+			write(1, str, ft_strlen(str));
+			write(1, "\n", 1);
+		}
 		if (!str) // ctrl-D → readline retourne NULL → on quitte proprement
 		{
 			if (g_signal)  // interrupted by Ctrl-C

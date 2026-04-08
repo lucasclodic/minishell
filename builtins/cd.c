@@ -22,7 +22,7 @@ static char	*get_cd_path(char **args, char **env)
 	{
 		path = get_env(env, "HOME");
 		if (!path)
-			printf("minishell: cd: HOME not set\n");
+			print_error("cd", NULL, "HOME not set");
 		return (path);
 	}
 	return (args[1]);
@@ -50,18 +50,13 @@ int	ft_cd(char **args, char ***env)
 	char	*path;
 	char	*oldpwd;
 
-	if (args[1] && args[2])
-	{
-		printf("minishell: cd: too many arguments\n");
-		return (1);
-	}
 	path = get_cd_path(args, *env);
 	if (!path)
 		return (1);
 	oldpwd = getcwd(NULL, 0);
 	if (chdir(path) == -1)
 	{
-		printf("minishell: cd: %s: No such file or directory\n", path);
+		print_error("cd", path, "No such file or directory");
 		free(oldpwd);
 		return (1);
 	}

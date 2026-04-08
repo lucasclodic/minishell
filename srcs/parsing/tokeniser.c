@@ -56,7 +56,7 @@ static int	handle_word(char *str, int i, t_node **head)
 	end = skip_word(str, i);
 	if (end == -1)
 	{
-		printf("minishell: syntax error unclosed apostrophes\n");
+		print_error("syntax error", NULL, "unclosed apostrophes");
 		clean_struct(head);
 		return (-1);
 	}
@@ -79,16 +79,16 @@ int check_syntax(t_node *head)
 	{
 		if (head->type == PIPE && !(prec && prec->type == WORD && head->next))
 		{
-			printf("minishell: syntax error near unexpected token '%s'\n", head->str);
+			syntax_error(head->str);
 			return (0);
 		}
 		if ((head->type == REDIR_IN || head->type == REDIR_OUT || head->type == APPEND || head->type == HEREDOC)
 			&& !(head->next && head->next->type == WORD))
 		{
 			if (head->next)
-				printf("minishell: syntax error near unexpected token '%s'\n", head->next->str);
+				syntax_error(head->next->str);
 			else
-				printf("minishell: syntax error near unexpected token '\\n'\n");
+				syntax_error("newline");
 			return (0);
 		}
 		prec = head; 

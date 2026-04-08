@@ -97,6 +97,11 @@ int	exec(t_cmd *cmd, char **envp)
 			return (data.open_code);
 		if (open_redirs_out(cmd->redirs, &data) == -1)
 			return (free_pid_return(1, data.pid));
+		if (!cmd->args[0] && data.cmd_count == 1)
+		{
+			close_in_out(data.infd, data.outfd);
+			return (free_pid_return(0, data.pid));
+		}
 		if (cmd->args[0] && data.cmd_count == 1 && is_builtin(cmd->args[0]))
 		{
 			free(data.pid);

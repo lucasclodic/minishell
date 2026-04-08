@@ -23,6 +23,7 @@ SRCS =	srcs/minishell.c\
 		srcs/parsing/expander-str.c\
 		srcs/env/get-env.c srcs/env/set-env.c\
 		srcs/signals/signals.c\
+		srcs/error.c\
 		builtins/builtins.c\
 		builtins/echo.c builtins/cd.c builtins/pwd.c\
 		builtins/export.c builtins/unset.c builtins/env.c\

@@ -23,19 +23,8 @@ int	open_and_error(t_data *data, t_cmd *cmd)
 	data->open_code = open_redirs_in(cmd->redirs, data);
 	if (data->open_code == -1)
 	{
-		if (data->infd != -1)
-		{
-			close_in_out(data->infd, data->outfd);
-			return (free_pid_return(1, data->pid));
-		}
-		data->infd = open("/dev/null", O_RDONLY);
-		if (data->infd == -1)
-		{
-			close_in_out(data->infd, data->outfd);
-			perror("/dev/null");
-			return (free_pid_return(1, data->pid));
-		}
-		return (0);
+		close_in_out(data->infd, data->outfd);
+		return (free_pid_return(1, data->pid));
 	}
 	else if (data->open_code == 130)
 	{

@@ -61,17 +61,17 @@ int	ft_exit(char **args)
 {
 	long	code;
 
-	printf("exit\n");
+	ft_putendl_fd("exit", 2);
 	if (!args[1])
 		exit(0);
 	if (!is_numeric(args[1]))
 	{
-		printf("minishell: exit: %s: numeric argument required\n", args[1]);
-		exit(2);
+		print_error("exit", args[1], "numeric argument required");
+		exit(255);
 	}
 	if (args[2])
 	{
-		printf("minishell: exit: too many arguments\n");
+		print_error("exit", NULL, "too many arguments");
 		return (1);
 	}
 	code = ft_atol(args[1]);

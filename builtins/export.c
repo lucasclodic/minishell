@@ -69,7 +69,7 @@ static int	find_eq(char *arg)
 		return (-1);
 	if (!is_valid_name(arg, i))
 	{
-		printf("minishell: export: `%s': not a valid identifier\n", arg);
+		print_error("export", arg, "not a valid identifier");
 		return (-2);
 	}
 	return (i);
@@ -81,9 +81,16 @@ static int	handle_export_arg(char *arg, char ***env)
 	char	*name;
 	char	*value;
 
-	eq_pos = find_eq(arg); // position du = 
+	eq_pos = find_eq(arg); // position du =
 	if (eq_pos == -1)
+	{
+		if (!is_valid_name(arg, ft_strlen(arg)))
+		{
+			print_error("export", arg, "not a valid identifier");
+			return (1);
+		}
 		return (0);
+	}
 	if (eq_pos == -2)
 		return (1);
 	name = ft_substr(arg, 0, eq_pos);
