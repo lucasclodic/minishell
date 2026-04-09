@@ -72,19 +72,26 @@ int	wait_and_return(t_data data)
 	int	exit_code;
 
 	i = 0;
+	exit_code = 0;
 	while (i < data.cmd_count)
 	{
-		waitpid(data.pid[i], &status, 0);
-		if (i == data.cmd_count - 1)
+		if (data.pid[i] != -1)
 		{
-			setup_signals_interactive();
-			if (WIFEXITED(status))
-				exit_code = (WEXITSTATUS(status));
-			else if (WIFSIGNALED(status))
-				exit_code = (128 + WTERMSIG(status));
-			else
-				exit_code = 1;
+			waitpid(data.pid[i], &status, 0);
+			if (i == data.cmd_count - 1)
+			{
+				if (WIFEXITED(status))
+					exit_code = (WEXITSTATUS(status));
+				else if (WIFSIGNALED(status))
+					exit_code = (128 + WTERMSIG(status));
+				else
+					exit_code = 1;
+			}
 		}
+		else if (i == data.cmd_count - 1)
+			exit_code = 1;
+		if (i == data.cmd_count - 1)
+			setup_signals_interactive();
 		i++;
 	}
 	free(data.pid);

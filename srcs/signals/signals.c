@@ -80,6 +80,7 @@ void	setup_signals_default(void)
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGQUIT, &sa, NULL);
+	sigaction(SIGPIPE, &sa, NULL);
 }
 
 // Mode parent pendant exec : le shell ignore les signaux

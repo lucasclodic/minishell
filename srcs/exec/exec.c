@@ -27,6 +27,8 @@ void	work_child(t_cmd *cmd, char **envp, t_data data)
 		close(data.infd);
 	if (data.outfd > 2)
 		close(data.outfd);
+	if (data.pipefd[0] > 2 && data.pipefd[0] != data.infd)
+		close(data.pipefd[0]);
 	execute(cmd, envp, data);
 }
 
@@ -96,7 +98,12 @@ int	exec(t_cmd *cmd, char **envp)
 		if (data.open_code != 0)
 			return (data.open_code);
 		if (open_redirs_out(cmd->redirs, &data) == -1)
-			return (free_pid_return(1, data.pid));
+		{
+			if (data.cmd_count == 1)
+				return (free_pid_return(1, data.pid));
+			next_command(&data, &cmd);
+			continue ;
+		}
 		if (!cmd->args[0] && data.cmd_count == 1)
 		{
 			close_in_out(data.infd, data.outfd);
