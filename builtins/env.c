@@ -21,7 +21,7 @@ int	ft_env(char **env)
 		return (1);
 	while (env[i])
 	{
-		printf("%s\n", env[i]);
+		ft_putendl_fd(env[i], 1);
 		i++;
 	}
 	return (0);

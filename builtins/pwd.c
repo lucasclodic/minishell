@@ -19,7 +19,7 @@ int	ft_pwd(void)
 	path = getcwd(NULL, 0);
 	if (!path)
 		return (1);
-	printf("%s\n", path);
+	ft_putendl_fd(path, 1);
 	free(path);
 	return (0);
 }

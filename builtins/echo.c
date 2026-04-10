@@ -26,12 +26,12 @@ int	ft_echo(char **args)
 	}
 	while (args[i])
 	{
-		printf("%s", args[i]);
-		if (args[i + 1]) // si tu fais echo 'salut' 'lucas' il faut garder l'espace 
-			printf(" ");
+		ft_putstr_fd(args[i], 1);
+		if (args[i + 1])
+			write(1, " ", 1);
 		i++;
 	}
 	if (newline)
-		printf("\n");
+		write(1, "\n", 1);
 	return (0);
 }

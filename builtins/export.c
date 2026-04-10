@@ -44,13 +44,17 @@ static void	print_export(char **env)
 	i = 0;
 	while (env[i])
 	{
-		printf("declare -x ");
+		ft_putstr_fd("declare -x ", 1);
 		j = 0;
 		while (env[i][j] && env[i][j] != '=')
-			printf("%c", env[i][j++]);
+			write(1, &env[i][j++], 1);
 		if (env[i][j] == '=')
-			printf("=\"%s\"", env[i] + j + 1);
-		printf("\n");
+		{
+			ft_putstr_fd("=\"", 1);
+			ft_putstr_fd(env[i] + j + 1, 1);
+			write(1, "\"", 1);
+		}
+		write(1, "\n", 1);
 		i++;
 	}
 }
