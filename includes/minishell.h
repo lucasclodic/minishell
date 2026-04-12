@@ -145,6 +145,8 @@ void	free_and_exit(t_cmd *cmd, int exit_code);
 void	execute(t_cmd *cmds, char **envp, t_data data);
 void	free_perror_exit(char *str, t_data data);
 int		exec(t_cmd *cmds, char **envp);
+int		open_redirs(t_node *redirs, t_data *data);
+int		create_pipe(t_node *redirs, t_data *data);
 int 	open_redirs_in(t_node *redirs, t_data *data);
 int		open_redirs_out(t_node *redirs, t_data *data);
 int		ft_strcmp(const char *s1, const char *s2);

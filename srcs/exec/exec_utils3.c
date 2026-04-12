@@ -20,7 +20,7 @@ int	free_pid_return(int code, pid_t *pid)
 
 int	open_and_error(t_data *data, t_cmd *cmd)
 {
-	data->open_code = open_redirs_in(cmd->redirs, data);
+	data->open_code = open_redirs(cmd->redirs, data);
 	if (data->open_code == -1)
 	{
 		if (data->cmd_count == 1)

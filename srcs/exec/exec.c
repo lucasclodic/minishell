@@ -94,12 +94,17 @@ int	exec(t_cmd *cmd, char **envp)
 	while (cmd)
 	{
 		setup_signals_ignore();
-		data.open_code = open_and_error(&data, cmd);
+		data.open_code = open_redirs(cmd->redirs, &data);
 		if (data.open_code != 0)
-			return (data.open_code);
-		if (open_redirs_out(cmd->redirs, &data) == -1)
 		{
+			if (data.open_code == 130)
+				return (free_pid_return(130, data.pid));
 			if (data.cmd_count == 1)
+				return (free_pid_return(1, data.pid));
+			if (data.outfd > 2)
+				close(data.outfd);
+			if (data.i < data.cmd_count - 1
+				&& create_pipe(NULL, &data) == -1)
 				return (free_pid_return(1, data.pid));
 			next_command(&data, &cmd);
 			continue ;

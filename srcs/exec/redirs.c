@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirs.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 14:37:29 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/04/01 15:41:34 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/10 16:24:16 by lucas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,29 +51,6 @@ int	close_and_handle_infile(t_node *redirs, t_data *data)
 	return (0);
 }
 
-int	open_redirs_in(t_node *redirs, t_data *data)
-{
-	if (!redirs && data->infd != -2)
-		data->infd = data->pipefd[0];
-	while (redirs && (redirs->type == REDIR_IN || redirs->type == HEREDOC))
-	{
-		if (close_and_handle_infile(redirs, data) == -1)
-			return (-1);
-		data->here_doc_code = handle_here_doc(redirs, data);
-		if (data->here_doc_code != 0)
-			return (data->here_doc_code);
-		redirs = redirs->next;
-	}
-	if (data->here_doc == 1)
-	{
-		data->infd = data->pipefd[0];
-		data->here_doc = 0;
-	}
-	if (data->infd == -2)
-		data->infd = 0;
-	return (0);
-}
-
 int	create_pipe(t_node *redirs, t_data *data)
 {
 	if (!redirs)
@@ -89,6 +66,67 @@ int	create_pipe(t_node *redirs, t_data *data)
 			}
 			data->outfd = data->pipefd[1];
 		}
+	}
+	return (0);
+}
+
+int	open_redirs(t_node *redirs, t_data *data)
+{
+	int	redirs_in;
+	int	redirs_out;
+
+	redirs_in = 0;
+	redirs_out = 0;
+	data->outfd = -2;
+	while (redirs)
+	{
+		if (redirs->type == REDIR_IN || redirs->type == HEREDOC)
+		{
+			if (close_and_handle_infile(redirs, data) == -1)
+				return (-1);
+			if (redirs->type == HEREDOC)
+			{
+				data->here_doc_code = handle_here_doc(redirs, data);
+				if (data->here_doc_code != 0)
+					return (data->here_doc_code);
+			}
+			redirs_in = 1;
+		}
+		else if (redirs->type == REDIR_OUT || redirs->type == APPEND)
+		{
+			if (data->outfd != -2)
+				close(data->outfd);
+			if (redirs->type == APPEND)
+				data->outfd = open(redirs->str,
+						O_WRONLY | O_APPEND | O_CREAT, 0644);
+			else if (redirs->type == REDIR_OUT)
+				data->outfd = open(redirs->str,
+						O_WRONLY | O_TRUNC | O_CREAT, 0644);
+			if (data->outfd == -1)
+			{
+				perror(redirs->str);
+				return (-1);
+			}
+			redirs_out = 1;
+		}
+		redirs = redirs->next;
+	}
+	if (data->here_doc == 1)
+	{
+		data->infd = data->pipefd[0];
+		data->here_doc = 0;
+	}
+	if (!redirs_in)
+	{
+		if (data->infd != -2)
+			data->infd = data->pipefd[0];
+		else
+			data->infd = 0;
+	}
+	if (!redirs_out)
+	{
+		if (create_pipe(NULL, data) == -1)
+			return (-1);
 	}
 	return (0);
 }
