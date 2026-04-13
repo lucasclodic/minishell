@@ -6,7 +6,7 @@
 /*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 14:37:29 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/04/10 16:24:16 by lucas            ###   ########.fr       */
+/*   Updated: 2026/04/13 13:13:34 by lucas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	create_pipe(t_node *redirs, t_data *data)
 {
 	if (!redirs)
 	{
-		if (data->i == data->cmd_count - 1)
+		if (data->i == data->cmd_count - 1) // ici on regarde si c'est la dernière commande
 			data->outfd = 1;
 		else
 		{
