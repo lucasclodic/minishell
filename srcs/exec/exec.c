@@ -6,7 +6,7 @@
 /*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 18:35:05 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/04/07 19:38:56 by lucas            ###   ########.fr       */
+/*   Updated: 2026/04/13 17:08:44 by lucas            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ int	exec(t_cmd *cmd, char **envp)
 			if (data.outfd > 2)
 				close(data.outfd);
 			if (data.i < data.cmd_count - 1
-				&& create_pipe(NULL, &data) == -1)
+				&& create_pipe(&data) == -1)
 				return (free_pid_return(1, data.pid));
 			next_command(&data, &cmd);
 			continue ;
