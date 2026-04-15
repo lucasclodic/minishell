@@ -67,7 +67,7 @@ int	ft_exit(char **args)
 	if (!is_numeric(args[1]))
 	{
 		print_error("exit", args[1], "numeric argument required");
-		exit(255);
+		exit(2);
 	}
 	if (args[2])
 	{

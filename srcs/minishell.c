@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:08:58 by lucas             #+#    #+#             */
-/*   Updated: 2026/04/07 17:54:14 by lucas            ###   ########.fr       */
+/*   Updated: 2026/04/15 10:11:53 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void build_prompt(char *buf)
 {
-    char	cwd[50];
+	char	cwd[50];
 	size_t	len;
 	size_t	i;
 	char	*ms;
@@ -22,8 +22,8 @@ void build_prompt(char *buf)
 	len = 0;
 	i = 0;
 	ms = "minishell> ";
-    if (!getcwd(cwd, sizeof(cwd)))
-        buf[0] = '\0';
+	if (!getcwd(cwd, sizeof(cwd)))
+		buf[0] = '\0';
 	while (cwd[i])
 	{
 		buf[len++] = cwd[i];
@@ -60,14 +60,7 @@ int	main(int argc, char **argv, char **envp)
 	{
 		setup_signals_interactive();
 		build_prompt(prompt);
-		if (!isatty(STDIN_FILENO))
-			write(1, prompt, ft_strlen(prompt));
 		str = readline(prompt);
-		if (!isatty(STDIN_FILENO) && str)
-		{
-			write(1, str, ft_strlen(str));
-			write(1, "\n", 1);
-		}
 		if (!str) // ctrl-D → readline retourne NULL → on quitte proprement
 		{
 			if (g_signal)  // interrupted by Ctrl-C
