@@ -33,25 +33,30 @@ static int	is_valid_name(char *name, int len)
 
 static void	print_export(char **env)
 {
-	int	i;
-	int	j;
+	char	**sorted;
+	int		i;
+	int		j;
 
+	sorted = sorted_env(env);
+	if (!sorted)
+		return ;
 	i = 0;
-	while (env[i])
+	while (sorted[i])
 	{
 		ft_putstr_fd("declare -x ", 1);
 		j = 0;
-		while (env[i][j] && env[i][j] != '=')
-			write(1, &env[i][j++], 1);
-		if (env[i][j] == '=')
+		while (sorted[i][j] && sorted[i][j] != '=')
+			write(1, &sorted[i][j++], 1);
+		if (sorted[i][j] == '=')
 		{
 			ft_putstr_fd("=\"", 1);
-			ft_putstr_fd(env[i] + j + 1, 1);
+			ft_putstr_fd(sorted[i] + j + 1, 1);
 			write(1, "\"", 1);
 		}
 		write(1, "\n", 1);
 		i++;
 	}
+	free(sorted);
 }
 
 static int	find_eq(char *arg)

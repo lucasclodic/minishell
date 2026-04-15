@@ -84,14 +84,12 @@ void	next_command(t_data *data, t_cmd **cmd)
 	*cmd = (*cmd)->next;
 }
 
-int	exec(t_cmd *cmd, char ***envp, char *str, t_node *tokens)
+int	exec(t_cmd *cmd, char ***envp, t_data *ctx)
 {
 	t_data	data;
 	int		code;
 
-	data.data_code = init_data(&data, cmd);
-	data.str_ref = str;
-	data.tokens_ref = tokens;
+	data.data_code = init_data(&data, cmd, ctx, *envp);
 	if (data.data_code != 0)
 		return (data.data_code);
 	while (cmd)

@@ -6,7 +6,7 @@
 /*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:08:58 by lucas             #+#    #+#             */
-/*   Updated: 2026/04/15 16:48:04 by lclodic          ###   ########.fr       */
+/*   Updated: 2026/04/15 19:44:00 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,23 +56,26 @@ int	process_line(char *str, char ***env, int exit_code, int *should_break)
 {
 	t_node	*tokens;
 	t_cmd	*cmds;
+	t_data	ctx;
 
 	*should_break = 0;
 	tokens = tokeniser(str);
 	if (!tokens)
+	{
+		if (has_content(str))
+			return (2);
 		return (exit_code);
+	}
 	cmds = parser(tokens);
 	if (!cmds)
 		return (clean_struct(&tokens), exit_code);
-	expand_cmds(cmds, exit_code, *env);
-	exit_code = exec(cmds, env, str, tokens);
+	ctx.str_ref = str;
+	ctx.tokens_ref = tokens;
+	exit_code = run_cmds(cmds, env, exit_code, &ctx);
 	free_cmds(&cmds);
 	clean_struct(&tokens);
 	if (!isatty(STDIN_FILENO) && exit_code == 130)
-	{
-		write(1, "\n", 1);
-		*should_break = 1;
-	}
+		return (write(1, "\n", 1), *should_break = 1, exit_code);
 	return (exit_code);
 }
 

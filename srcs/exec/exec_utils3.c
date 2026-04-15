@@ -43,7 +43,7 @@ int	open_and_error(t_data *data, t_cmd *cmd)
 	return (0);
 }
 
-int	init_data(t_data *data, t_cmd *cmd)
+int	init_data(t_data *data, t_cmd *cmd, t_data *ctx, char **env)
 {
 	int	i;
 
@@ -54,13 +54,14 @@ int	init_data(t_data *data, t_cmd *cmd)
 	data->pipefd[1] = -2;
 	data->here_doc = 0;
 	data->exec_mode = 0;
+	data->str_ref = ctx->str_ref;
+	data->tokens_ref = ctx->tokens_ref;
+	data->exit_status = ctx->exit_status;
+	data->env = env;
 	data->cmd_count = count_cmds(cmd);
 	data->pid = malloc(data->cmd_count * sizeof(pid_t));
 	if (!data->pid)
-	{
-		shell_perror("malloc");
-		return (1);
-	}
+		return (shell_perror("malloc"), 1);
 	i = -1;
 	while (++i < data->cmd_count)
 		data->pid[i] = -1;

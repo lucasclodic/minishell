@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <sys/stat.h>
 
 static char	*get_cd_path(char **args, char **env)
 {
@@ -39,6 +40,16 @@ static void	update_pwd(char ***env, char *oldpwd)
 	}
 }
 
+static void	cd_error(char *path)
+{
+	if (errno == ENOTDIR)
+		print_error("cd", path, "Not a directory");
+	else if (errno == EACCES)
+		print_error("cd", path, "Permission denied");
+	else
+		print_error("cd", path, "No such file or directory");
+}
+
 int	ft_cd(char **args, char ***env)
 {
 	char	*path;
@@ -55,7 +66,7 @@ int	ft_cd(char **args, char ***env)
 	oldpwd = getcwd(NULL, 0);
 	if (chdir(path) == -1)
 	{
-		print_error("cd", path, "No such file or directory");
+		cd_error(path);
 		free(oldpwd);
 		return (1);
 	}

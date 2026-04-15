@@ -22,34 +22,6 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
-int	get_lines(char *delim, t_data *data)
-{
-	char	*line;
-
-	while (1)
-	{
-		line = readline("> ");
-		if (g_signal == SIGINT)
-		{
-			g_signal = 0;
-			free(line);
-			close(data->pipefd[0]);
-			close(data->pipefd[1]);
-			return (130);
-		}
-		if (!line || ft_strcmp(line, delim) == 0)
-		{
-			free(line);
-			break ;
-		}
-		write(data->pipefd[1], line, ft_strlen(line));
-		write(data->pipefd[1], "\n", 1);
-		free(line);
-	}
-	close(data->pipefd[1]);
-	return (0);
-}
-
 int	count_cmds(t_cmd *cmds)
 {
 	int		i;

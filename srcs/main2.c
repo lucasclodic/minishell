@@ -12,6 +12,24 @@
 
 #include "../includes/minishell.h"
 
+int	run_cmds(t_cmd *cmds, char ***env, int exit_code, t_data *ctx)
+{
+	expand_cmds(cmds, exit_code, *env);
+	ctx->exit_status = exit_code;
+	return (exec(cmds, env, ctx));
+}
+
+int	has_content(const char *str)
+{
+	while (*str)
+	{
+		if (*str != ' ' && *str != '\t')
+			return (1);
+		str++;
+	}
+	return (0);
+}
+
 char	*get_next_cmd(char *prompt, int *should_break)
 {
 	char	*str;

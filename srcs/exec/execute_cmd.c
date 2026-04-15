@@ -81,6 +81,7 @@ void	execc(char *path, t_cmd *cmds, char **envp, t_data data)
 	char	**cmd;
 
 	cmd = cmds->args;
+	check_is_dir(path, cmds, envp, data);
 	if (execve(path, cmd, envp) == -1)
 	{
 		if (data.exec_mode == 1)

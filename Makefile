@@ -27,10 +27,10 @@ SRCS =	srcs/main.c srcs/main2.c\
 		srcs/error.c\
 		builtins/builtins.c\
 		builtins/echo.c builtins/cd.c builtins/pwd.c\
-		builtins/export.c builtins/unset.c builtins/env.c\
+		builtins/export.c builtins/export_utils.c builtins/unset.c builtins/env.c\
 		builtins/exit.c\
 		exec.c execute_cmd.c exec_utils.c exec_utils2.c redirs.c exec_utils3.c\
-		exec_utils4.c redirs2.c exec2.c\
+		exec_utils4.c redirs2.c exec2.c heredoc.c\
 		gnl.c gnl_utils.c gnl_utils2.c\
 		exec_helper_cleanup.c
 

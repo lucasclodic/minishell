@@ -30,13 +30,13 @@ static int	is_numeric(char *str)
 	return (1);
 }
 
-static long	ft_atol(char *str)
+static int	parse_long(const char *str, long *out)
 {
-	long	result;
-	int		sign;
-	int		i;
+	unsigned long	acc;
+	int				sign;
+	int				i;
 
-	result = 0;
+	acc = 0;
 	sign = 1;
 	i = 0;
 	if (str[i] == '+' || str[i] == '-')
@@ -47,10 +47,14 @@ static long	ft_atol(char *str)
 	}
 	while (str[i] >= '0' && str[i] <= '9')
 	{
-		result = result * 10 + (str[i] - '0');
+		acc = acc * 10 + (unsigned long)(str[i] - '0');
+		if ((sign == 1 && acc > 9223372036854775807UL)
+			|| (sign == -1 && acc > 9223372036854775808UL))
+			return (0);
 		i++;
 	}
-	return (result * sign);
+	*out = (long)(sign * (long)acc);
+	return (1);
 }
 
 int	ft_exit(char **args)
@@ -61,7 +65,7 @@ int	ft_exit(char **args)
 		ft_putendl_fd("exit", 2);
 	if (!args[1])
 		exit(0);
-	if (!is_numeric(args[1]))
+	if (!is_numeric(args[1]) || !parse_long(args[1], &code))
 	{
 		print_error("exit", args[1], "numeric argument required");
 		exit(2);
@@ -71,7 +75,6 @@ int	ft_exit(char **args)
 		print_error("exit", NULL, "too many arguments");
 		return (1);
 	}
-	code = ft_atol(args[1]);
 	exit((unsigned char)code);
 	return (0);
 }
