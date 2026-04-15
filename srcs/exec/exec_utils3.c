@@ -49,12 +49,16 @@ int	init_data(t_data *data, t_cmd *cmd)
 
 	data->i = 0;
 	data->infd = -2;
+	data->outfd = -2;
+	data->pipefd[0] = -2;
+	data->pipefd[1] = -2;
 	data->here_doc = 0;
+	data->exec_mode = 0;
 	data->cmd_count = count_cmds(cmd);
 	data->pid = malloc(data->cmd_count * sizeof(pid_t));
 	if (!data->pid)
 	{
-		perror("malloc");
+		shell_perror("malloc");
 		return (1);
 	}
 	i = -1;

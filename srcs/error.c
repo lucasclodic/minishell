@@ -31,3 +31,9 @@ void	print_error(char *cmd, char *arg, char *msg)
 	}
 	ft_putendl_fd(msg, 2);
 }
+
+void	shell_perror(const char *ctx)
+{
+	ft_putstr_fd("minishell: ", 2);
+	perror(ctx);
+}

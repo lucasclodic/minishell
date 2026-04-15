@@ -14,14 +14,9 @@
 
 void	cmd_not_found(char *str)
 {
-	ft_putstr_fd("command not found: ", 2);
-	ft_putendl_fd(str, 2);
-}
-
-void	free_and_exit(t_cmd *cmd, int exit_code)
-{
-	free_cmds(&cmd);
-	exit(exit_code);
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(str, 2);
+	ft_putendl_fd(": command not found", 2);
 }
 
 void	*free_words(char **words)
@@ -40,15 +35,8 @@ void	*free_words(char **words)
 	return (NULL);
 }
 
-void	free_perror_exit(char *str, t_data data)
-{
-	free(data.pid);
-	perror(str);
-	exit(1);
-}
-
 int	free_perror_return(char *str)
 {
-	perror(str);
+	shell_perror(str);
 	return (-1);
 }

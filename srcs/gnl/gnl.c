@@ -3,22 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   gnl.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/09 14:44:17 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/04/15 14:13:36 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/15 17:00:04 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-char	*free_and_null(char **buf, char *s, char *t)
-{
-	free(s);
-	free(t);
-	*buf = NULL;
-	return (NULL);
-}
+static char	*g_gnl_buffer;
 
 char	*readfile(int fd, ssize_t *bytes)
 {
@@ -75,7 +69,7 @@ char	*line(char **buffer)
 	char	*tmp;
 
 	newline = ftt_strchr(*buffer, '\n');
-	substr = ftt_substr(*buffer, 0, (newline - *buffer) + 1);//+1
+	substr = ftt_substr(*buffer, 0, (newline - *buffer) + 1);
 	if (!substr)
 	{
 		free(*buffer);
@@ -95,31 +89,39 @@ char	*line(char **buffer)
 	return (substr);
 }
 
+void	free_gnl_buffer(void)
+{
+	if (g_gnl_buffer)
+	{
+		free(g_gnl_buffer);
+		g_gnl_buffer = NULL;
+	}
+}
+
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
-	char		*tmp;
-	char		*rd;
-	ssize_t		bytes;
+	char	*tmp;
+	char	*rd;
+	ssize_t	bytes;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	while (!buffer || !ftt_strchr(buffer, '\n'))
+	while (!g_gnl_buffer || !ftt_strchr(g_gnl_buffer, '\n'))
 	{
 		rd = readfile(fd, &bytes);
 		if (!rd)
-			return (end(&buffer, &bytes));
-		if (!buffer)
-			buffer = rd;
+			return (end(&g_gnl_buffer, &bytes));
+		if (!g_gnl_buffer)
+			g_gnl_buffer = rd;
 		else
 		{
-			tmp = buffer;
-			buffer = ftt_strjoin(buffer, rd);
+			tmp = g_gnl_buffer;
+			g_gnl_buffer = ftt_strjoin(g_gnl_buffer, rd);
 			free(tmp);
 			free(rd);
-			if (!buffer)
+			if (!g_gnl_buffer)
 				return (NULL);
 		}
 	}
-	return (line(&buffer));
+	return (line(&g_gnl_buffer));
 }

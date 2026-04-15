@@ -19,7 +19,7 @@ int	handle_here_doc(t_node *redirs, t_data *data)
 		setup_signals_interactive();
 		if (pipe(data->pipefd) == -1)
 		{
-			perror("pipe");
+			shell_perror("pipe");
 			return (-1);
 		}
 		if (get_lines(redirs->str, data) == 130)
@@ -44,7 +44,7 @@ int	close_and_handle_infile(t_node *redirs, t_data *data)
 		data->infd = open(redirs->str, O_RDONLY);
 		if (data->infd == -1)
 		{
-			perror(redirs->str);
+			shell_perror(redirs->str);
 			return (-1);
 		}
 	}
@@ -61,7 +61,7 @@ int	create_pipe(t_data *data)
 	}
 	if (pipe(data->pipefd) == -1)
 	{
-		perror("pipe");
+		shell_perror("pipe");
 		return (-1);
 	}
 	if (data->outfd == -2)
@@ -71,9 +71,23 @@ int	create_pipe(t_data *data)
 	return (0);
 }
 
+int	handle_input_redir(t_node *redirs, t_data *data)
+{
+	if (close_and_handle_infile(redirs, data) == -1)
+		return (-1);
+	if (redirs->type == HEREDOC)
+	{
+		data->here_doc_code = handle_here_doc(redirs, data);
+		if (data->here_doc_code != 0)
+			return (data->here_doc_code);
+	}
+	return (0);
+}
+
 int	open_redirs(t_node *redirs, t_data *data)
 {
 	int	redirs_in;
+	int	ret;
 
 	redirs_in = 0;
 	data->outfd = -2;
@@ -81,43 +95,17 @@ int	open_redirs(t_node *redirs, t_data *data)
 	{
 		if (redirs->type == REDIR_IN || redirs->type == HEREDOC)
 		{
-			if (close_and_handle_infile(redirs, data) == -1)
-				return (-1);
-			if (redirs->type == HEREDOC)
-			{
-				data->here_doc_code = handle_here_doc(redirs, data);
-				if (data->here_doc_code != 0)
-					return (data->here_doc_code);
-			}
+			ret = handle_input_redir(redirs, data);
+			if (ret != 0)
+				return (ret);
 			redirs_in = 1;
 		}
-		else if (redirs->type == REDIR_OUT || redirs->type == APPEND)
-		{
-			if (data->outfd != -2)
-				close(data->outfd);
-			if (redirs->type == APPEND)
-				data->outfd = open(redirs->str,
-						O_WRONLY | O_APPEND | O_CREAT, 0644);
-			else if (redirs->type == REDIR_OUT)
-				data->outfd = open(redirs->str,
-						O_WRONLY | O_TRUNC | O_CREAT, 0644);
-			if (data->outfd == -1)
-				return (perror(redirs->str), -1);
-		}
+		else if ((redirs->type == REDIR_OUT || redirs->type == APPEND)
+			&& handle_outfile(redirs, data) == -1)
+			return (-1);
 		redirs = redirs->next;
 	}
-	if (data->here_doc == 1)
-	{
-		data->infd = data->pipefd[0];
-		data->here_doc = 0;
-	}
-	if (!redirs_in)
-	{
-		if (data->infd != -2)
-			data->infd = data->pipefd[0];
-		else
-			data->infd = 0;
-	}
+	finalize_infd(data, redirs_in);
 	if (create_pipe(data) == -1)
 		return (-1);
 	return (0);

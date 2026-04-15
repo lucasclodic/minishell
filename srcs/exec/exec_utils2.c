@@ -79,14 +79,7 @@ int	wait_and_return(t_data data)
 		{
 			waitpid(data.pid[i], &status, 0);
 			if (i == data.cmd_count - 1)
-			{
-				if (WIFEXITED(status))
-					exit_code = (WEXITSTATUS(status));
-				else if (WIFSIGNALED(status))
-					exit_code = (128 + WTERMSIG(status));
-				else
-					exit_code = 1;
-			}
+				exit_code = compute_exit_status(status);
 		}
 		else if (i == data.cmd_count - 1)
 			exit_code = 1;
@@ -101,7 +94,7 @@ int	wait_and_return(t_data data)
 void	execve_err_msg(char *cmd, int mode)
 {
 	if (mode == 0)
-		perror(cmd);
+		shell_perror(cmd);
 	else
 		cmd_not_found(cmd);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:09:02 by lucas             #+#    #+#             */
-/*   Updated: 2026/04/15 15:17:58 by mnicolas         ###   ########.fr       */
+/*   Updated: 2026/04/15 17:00:23 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ int		ft_exit(char **args);
 // ======== error.c ========
 void	syntax_error(char *token);
 void	print_error(char *cmd, char *arg, char *msg);
+void	shell_perror(const char *ctx);
 
 // ======== exec ========
 typedef struct s_data
@@ -134,6 +135,9 @@ typedef struct s_data
 	int		open_code;
 	int		data_code;
 	int		here_doc_code;
+	int		exec_mode;
+	char	*str_ref;
+	t_node	*tokens_ref;
 }	t_data;
 
 void	*free_words(char **words);
@@ -142,10 +146,8 @@ void	work_child(t_cmd *cmd, char **envp, t_data data);
 int		wait_and_return(t_data data);
 int		fork_child(t_cmd *cmd, t_data *data, char **envp);
 void	cmd_not_found(char *str);
-void	free_and_exit(t_cmd *cmd, int exit_code);
 void	execute(t_cmd *cmds, char **envp, t_data data);
-void	free_perror_exit(char *str, t_data data);
-int		exec(t_cmd *cmds, char **envp);
+int		exec(t_cmd *cmd, char ***envp, char *str, t_node *tokens);
 int		open_redirs(t_node *redirs, t_data *data);
 int		create_pipe(t_data *data);
 int		open_redirs_in(t_node *redirs, t_data *data);
@@ -159,11 +161,25 @@ int		init_data(t_data *data, t_cmd *cmd);
 void	close_backup_and_return(int stdin_backup, int stdout_backup, char *str);
 void	close_in_out(int infd, int outfd);
 void	execve_err_msg(char *cmd, int mode);
+int		compute_exit_status(int status);
+int		handle_outfile(t_node *redirs, t_data *data);
+void	finalize_infd(t_data *data, int redirs_in);
+int		handle_input_redir(t_node *redirs, t_data *data);
+int		execute_builtin(t_cmd *cmd, char ***envp, t_data data);
+void	next_command(t_data *data, t_cmd **cmd);
+int		handle_open_err(t_data *data, t_cmd **cmd);
+int		dispatch_cmd(t_cmd *cmd, char ***envp, t_data *data);
+void	build_prompt(char *buf);
+char	*read_input(char *prompt);
+int		process_line(char *str, char ***env, int exit_code, int *should_break);
+char	*get_next_cmd(char *prompt, int *should_break);
 
 // ======== gnl ========
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 1
 # endif
+
+void	free_gnl_buffer(void);
 
 char	*get_next_line(int fd);
 char	*free_and_null(char **buf, char *s, char *t);
@@ -175,5 +191,7 @@ char	*ftt_strjoin(const char *s1, const char *s2);
 char	*ftt_strchr(const char *s, int c);
 char	*ftt_strdup(const char *s1);
 char	*ftt_substr(char const *s, size_t start, size_t len);
+
+void	child_cleanup_and_exit(t_cmd *cmds, char **env, t_data data, int code);
 
 #endif
