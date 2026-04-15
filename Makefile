@@ -15,6 +15,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
+LIBFT_SRCS = $(wildcard $(LIBFT_DIR)/*.c) $(wildcard $(LIBFT_DIR)/*.h)
 
 SRCS =	srcs/main.c srcs/main2.c\
 		srcs/parsing/tokeniser.c srcs/parsing/tokeniser-utils.c\
@@ -39,7 +40,7 @@ VPATH = srcs:srcs/parsing:srcs/env:srcs/signals:builtins:srcs/exec:srcs/gnl:.
 
 all: $(NAME)
 
-$(LIBFT):
+$(LIBFT): $(LIBFT_SRCS)
 	@$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME): $(LIBFT) $(OBJS)

@@ -12,8 +12,6 @@
 
 #include "../../includes/minishell.h"
 
-static char	*g_gnl_buffer;
-
 char	*readfile(int fd, ssize_t *bytes)
 {
 	char	*buf;
@@ -32,34 +30,6 @@ char	*readfile(int fd, ssize_t *bytes)
 	}
 	buf[*bytes] = '\0';
 	return (buf);
-}
-
-char	*end(char **buffer, ssize_t *bytes)
-{
-	char	*substr;
-
-	substr = NULL;
-	if (*bytes < 0)
-	{
-		free(*buffer);
-		*buffer = NULL;
-		return (NULL);
-	}
-	if (*bytes == 0 && !(*buffer))
-		return (NULL);
-	if (*buffer && **buffer)
-	{
-		substr = ftt_strdup(*buffer);
-		if (!substr)
-		{
-			free(*buffer);
-			*buffer = NULL;
-			return (NULL);
-		}
-	}
-	free(*buffer);
-	*buffer = NULL;
-	return (substr);
 }
 
 char	*line(char **buffer)
@@ -89,39 +59,48 @@ char	*line(char **buffer)
 	return (substr);
 }
 
-void	free_gnl_buffer(void)
+static int	append_read(char **buffer, char *rd)
 {
-	if (g_gnl_buffer)
+	char	*tmp;
+
+	if (!*buffer)
 	{
-		free(g_gnl_buffer);
-		g_gnl_buffer = NULL;
+		*buffer = rd;
+		return (0);
 	}
+	tmp = *buffer;
+	*buffer = ftt_strjoin(*buffer, rd);
+	free(tmp);
+	free(rd);
+	if (!*buffer)
+		return (-1);
+	return (0);
 }
 
 char	*get_next_line(int fd)
 {
-	char	*tmp;
-	char	*rd;
-	ssize_t	bytes;
+	static char	*buffer;
+	char		*rd;
+	ssize_t		bytes;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0)
+	{
+		free(buffer);
+		buffer = NULL;
 		return (NULL);
-	while (!g_gnl_buffer || !ftt_strchr(g_gnl_buffer, '\n'))
+	}
+	while (!buffer || !ftt_strchr(buffer, '\n'))
 	{
 		rd = readfile(fd, &bytes);
 		if (!rd)
-			return (end(&g_gnl_buffer, &bytes));
-		if (!g_gnl_buffer)
-			g_gnl_buffer = rd;
-		else
-		{
-			tmp = g_gnl_buffer;
-			g_gnl_buffer = ftt_strjoin(g_gnl_buffer, rd);
-			free(tmp);
-			free(rd);
-			if (!g_gnl_buffer)
-				return (NULL);
-		}
+			return (end(&buffer, &bytes));
+		if (append_read(&buffer, rd) < 0)
+			return (NULL);
 	}
-	return (line(&g_gnl_buffer));
+	return (line(&buffer));
+}
+
+void	free_gnl_buffer(void)
+{
+	get_next_line(-1);
 }

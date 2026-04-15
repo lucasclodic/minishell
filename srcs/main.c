@@ -14,30 +14,24 @@
 
 void	build_prompt(char *buf)
 {
-	char	cwd[50];
+	char	*cwd;
 	size_t	len;
 	size_t	i;
 	char	*ms;
 
 	len = 0;
 	i = 0;
-	ms = "minishell> ";
-	if (!getcwd(cwd, sizeof(cwd)))
-		buf[0] = '\0';
-	while (cwd[i])
+	ms = " $ minishell> ";
+	cwd = getcwd(NULL, 0);
+	if (cwd)
 	{
-		buf[len++] = cwd[i];
-		i++;
+		while (cwd[i] && len < 80)
+			buf[len++] = cwd[i++];
+		free(cwd);
 	}
 	i = 0;
-	buf[len++] = ' ';
-	buf[len++] = '$';
-	buf[len++] = ' ';
-	while (ms[i])
-	{
-		buf[len++] = ms[i];
-		i++;
-	}
+	while (ms[i] && len < 99)
+		buf[len++] = ms[i++];
 	buf[len] = '\0';
 }
 

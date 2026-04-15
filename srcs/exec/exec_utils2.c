@@ -42,7 +42,7 @@ int	get_lines(char *delim, t_data *data)
 			free(line);
 			break ;
 		}
-		write(data->pipefd[1], line, strlen(line));
+		write(data->pipefd[1], line, ft_strlen(line));
 		write(data->pipefd[1], "\n", 1);
 		free(line);
 	}

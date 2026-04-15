@@ -19,3 +19,31 @@ char	*free_and_null(char **buf, char *s, char *t)
 	*buf = NULL;
 	return (NULL);
 }
+
+char	*end(char **buffer, ssize_t *bytes)
+{
+	char	*substr;
+
+	substr = NULL;
+	if (*bytes < 0)
+	{
+		free(*buffer);
+		*buffer = NULL;
+		return (NULL);
+	}
+	if (*bytes == 0 && !(*buffer))
+		return (NULL);
+	if (*buffer && **buffer)
+	{
+		substr = ftt_strdup(*buffer);
+		if (!substr)
+		{
+			free(*buffer);
+			*buffer = NULL;
+			return (NULL);
+		}
+	}
+	free(*buffer);
+	*buffer = NULL;
+	return (substr);
+}
