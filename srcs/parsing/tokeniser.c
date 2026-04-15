@@ -3,23 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   tokeniser.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:08:49 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/23 18:13:11 by lucas            ###   ########.fr       */
+/*   Updated: 2026/04/15 11:43:09 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void add_node_to_main(t_node **head, t_node *node)
+void	add_node_to_main(t_node **head, t_node *node)
 {
-	t_node *tmp; 
+	t_node	*tmp;
 
 	if (!node)
 		return ;
 	if (!*head)
-		*head = node; 
+		*head = node;
 	else
 	{
 		tmp = *head;
@@ -29,10 +29,10 @@ void add_node_to_main(t_node **head, t_node *node)
 	}
 }
 
-static int	handle_operator(char *str, int i, t_node **head)
+static	int	handle_operator(char *str, int i, t_node **head)
 {
-	t_node *new; 
-	int end;
+	t_node	*new;
+	int		end;
 
 	if (str[i] != '|' && str[i + 1] && str[i] == str[i + 1])
 		end = i + 2;
@@ -48,10 +48,10 @@ static int	handle_operator(char *str, int i, t_node **head)
 	return (end);
 }
 
-static int	handle_word(char *str, int i, t_node **head)
+static	int	handle_word(char *str, int i, t_node **head)
 {
-	t_node *new;
-	int end;
+	t_node	*new;
+	int		end;
 
 	end = skip_word(str, i);
 	if (end == -1)
@@ -70,9 +70,9 @@ static int	handle_word(char *str, int i, t_node **head)
 	return (end);
 }
 
-int check_syntax(t_node *head)
+int	check_syntax(t_node *head)
 {
-	t_node *prec; 
+	t_node	*prec;
 
 	prec = NULL;
 	while (head)
@@ -82,7 +82,8 @@ int check_syntax(t_node *head)
 			syntax_error(head->str);
 			return (0);
 		}
-		if ((head->type == REDIR_IN || head->type == REDIR_OUT || head->type == APPEND || head->type == HEREDOC)
+		if ((head->type == REDIR_IN || head->type == REDIR_OUT
+				|| head->type == APPEND || head->type == HEREDOC)
 			&& !(head->next && head->next->type == WORD))
 		{
 			if (head->next)
@@ -91,37 +92,36 @@ int check_syntax(t_node *head)
 				syntax_error("newline");
 			return (0);
 		}
-		prec = head; 
-		head = head->next; 
+		prec = head;
+		head = head->next;
 	}
 	return (1);
 }
 
-t_node * tokeniser(char *str)
+t_node	*tokeniser(char *str)
 {
-	int i; 
-	t_node *HEAD;
+	int		i;
+	t_node	*head;
 
-	i = 0; 
-	HEAD = NULL;
+	i = 0;
+	head = NULL;
 	while (str[i])
 	{
 		while (str[i] && (str[i] == ' ' || str[i] == '\t'))
-			i++; 
+			i++;
 		if (!str[i])
 			break ;
 		if (str[i] == '|' || str[i] == '<' || str[i] == '>')
-			i = handle_operator(str, i, &HEAD);
+			i = handle_operator(str, i, &head);
 		else
-			i = handle_word(str, i, &HEAD);
+			i = handle_word(str, i, &head);
 		if (i == -1)
 			return (NULL);
 	}
-	if (!check_syntax(HEAD))
+	if (!check_syntax(head))
 	{
-		clean_struct(&HEAD);
+		clean_struct(&head);
 		return (NULL);
 	}
-	return (HEAD);
+	return (head);
 }
-

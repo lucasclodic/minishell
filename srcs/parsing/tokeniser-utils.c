@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   tokeniser-utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:08:45 by lucas             #+#    #+#             */
-/*   Updated: 2026/04/07 18:13:07 by lucas            ###   ########.fr       */
+/*   Updated: 2026/04/15 11:39:08 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void clean_struct(t_node **first)
+void	clean_struct(t_node **first)
 {
-	t_node *temp;
-	t_node *current;
+	t_node	*temp;
+	t_node	*current;
 
 	if (!*first)
 		return ;
@@ -32,12 +32,12 @@ void clean_struct(t_node **first)
 	*first = NULL;
 }
 
-static int	is_space_or_operator(char c)
+static	int	is_space_or_operator(char c)
 {
-	return (c == ' ' || c == '\t' || c == '|' || c == '<' || c == '>'); // retourne 1 si c est un espace
+	return (c == ' ' || c == '\t' || c == '|' || c == '<' || c == '>');
 }
 
-static t_token_type	token_type_identifier(char *str, int start)
+static	t_token_type	token_type_identifier(char *str, int start)
 {
 	if (str[start] == '|')
 		return (PIPE);
@@ -52,13 +52,13 @@ static t_token_type	token_type_identifier(char *str, int start)
 	return (WORD);
 }
 
-int skip_word(char *str, int i)
+int	skip_word(char *str, int i)
 {
-	int type;
+	int	type;
 
 	while (str[i] && !is_space_or_operator(str[i]))
 	{
-		if (str[i] == '\'' || str[i] == '"')  // si tu tombes sur une quote tu dois avancer jusqu'à trouver la fin, une quote non fermée est une erreur
+		if (str[i] == '\'' || str[i] == '"')
 		{
 			type = str[i];
 			i++;
@@ -74,9 +74,9 @@ int skip_word(char *str, int i)
 	return (i);
 }
 
-t_node *create_node(char * str, int start, int end)
+t_node	*create_node(char *str, int start, int end)
 {
-	t_node *output;
+	t_node	*output;
 
 	output = malloc(sizeof(t_node) * 1);
 	if (!output)

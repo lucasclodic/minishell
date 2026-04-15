@@ -12,9 +12,6 @@
 
 #include "../includes/minishell.h"
 
-// le flow sera : quand on recoit une t_cmd, faut check (is_buildin(cmd->args[0]))
-// si oui, il faut exec_builtin(cmd, &env)
-// si non faut fork + execve
 int	is_builtin(char *cmd)
 {
 	if (!cmd)

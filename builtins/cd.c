@@ -12,8 +12,6 @@
 
 #include "../includes/minishell.h"
 
-// if (!args[1]) est là dans le cas où on fait juste cd 
-// dans le cas ou on a quelque chose après le cd c'est que c'est le chemin vers lequel on veut aller
 static char	*get_cd_path(char **args, char **env)
 {
 	char	*path;
@@ -28,8 +26,6 @@ static char	*get_cd_path(char **args, char **env)
 	return (args[1]);
 }
 
-// getcwd est une fonction de la libc, elle malloc direct la string avec le chemin du répertoire courant du processus 
-// OLDPWD c'est une variable d'environnement qui est le chemin du directory précédent où on était
 static void	update_pwd(char ***env, char *oldpwd)
 {
 	char	*newpwd;
@@ -43,8 +39,6 @@ static void	update_pwd(char ***env, char *oldpwd)
 	}
 }
 
-// chdir change le répertoire courant du processus 
-// retourne 0 si ça marche et -1 si erreur 
 int	ft_cd(char **args, char ***env)
 {
 	char	*path;

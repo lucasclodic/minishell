@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:09:04 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/23 17:58:14 by lucas            ###   ########.fr       */
+/*   Updated: 2026/04/15 11:33:36 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static char	**fill_args(t_node *tokens, int count)
 			args[i] = ft_strdup(tokens->str);
 			if (!args[i])
 			{
-				free_args(args, i); 
+				free_args(args, i);
 				return (NULL);
 			}
 			i++;
@@ -99,15 +99,6 @@ static t_cmd	*create_cmd(t_node *tokens)
 	return (cmd);
 }
 
-static t_node	*skip_to_pipe(t_node *tokens)
-{
-	while (tokens && tokens->type != PIPE)
-		tokens = tokens->next;
-	if (tokens)
-		tokens = tokens->next;
-	return (tokens);
-}
-
 t_cmd	*parser(t_node *tokens)
 {
 	t_cmd	*cmds;
@@ -124,15 +115,10 @@ t_cmd	*parser(t_node *tokens)
 			return (NULL);
 		}
 		if (!cmds)
-		{
 			cmds = new;
-			current = new;
-		}
 		else
-		{
 			current->next = new;
-			current = new;
-		}
+		current = new;
 		tokens = skip_to_pipe(tokens);
 	}
 	return (cmds);

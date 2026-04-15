@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:09:02 by lucas             #+#    #+#             */
-/*   Updated: 2026/04/13 17:08:38 by lucas            ###   ########.fr       */
+/*   Updated: 2026/04/15 11:53:54 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,26 +30,26 @@
 typedef enum e_token_type
 {
 	WORD,
-	PIPE, // |
-	REDIR_IN, // <
-	REDIR_OUT, // >
-	HEREDOC, // << lis l'entrée ligne par ligne jusqu'à ce que tu tombes sur un delimiteur
-	APPEND // >> comme > mais n'écrase pas le contenu du fichier
-}   t_token_type;
+	PIPE,
+	REDIR_IN,
+	REDIR_OUT,
+	HEREDOC,
+	APPEND
+}	t_token_type;
 
 typedef struct s_node
 {
 	char			*str;
 	t_token_type	type;
 	struct s_node	*next;
-} t_node;
+}	t_node;
 
 typedef struct s_cmd
 {
 	char			**args;
 	t_node			*redirs;
 	struct s_cmd	*next;
-} t_cmd;
+}	t_cmd;
 
 typedef struct s_expand
 {
@@ -58,12 +58,13 @@ typedef struct s_expand
 	int		quote;
 	int		exit_status;
 	char	**env;
-} t_expand;
+}	t_expand;
 
 // ======== cmd-utils.c ========
 t_node	*create_redir(t_token_type type, char *filename);
 void	free_args(char **args, int count);
 void	free_cmds(t_cmd **cmds);
+t_node	*skip_to_pipe(t_node *tokens);
 
 // ======== cmd.c ========
 t_cmd	*parser(t_node *tokens);
@@ -102,7 +103,7 @@ int		is_builtin(char *cmd);
 int		exec_builtin(t_cmd *cmd, char ***env);
 
 // ======== signals/signals.c ========
-extern volatile	sig_atomic_t	g_signal;
+extern volatile sig_atomic_t	g_signal;
 void	setup_signals_interactive(void);
 void	setup_signals_default(void);
 void	setup_signals_ignore(void);
@@ -129,7 +130,7 @@ typedef struct s_data
 	int		pipefd[2];
 	int		i;
 	pid_t	*pid;
-	int 	here_doc;
+	int		here_doc;
 	int		open_code;
 	int		data_code;
 	int		here_doc_code;
@@ -147,12 +148,12 @@ void	free_perror_exit(char *str, t_data data);
 int		exec(t_cmd *cmds, char **envp);
 int		open_redirs(t_node *redirs, t_data *data);
 int		create_pipe(t_data *data);
-int 	open_redirs_in(t_node *redirs, t_data *data);
+int		open_redirs_in(t_node *redirs, t_data *data);
 int		open_redirs_out(t_node *redirs, t_data *data);
 int		ft_strcmp(const char *s1, const char *s2);
 int		get_lines(char *delim, t_data *data);
 int		count_cmds(t_cmd *cmds);
-int 	free_pid_return(int code, pid_t *pid);
+int		free_pid_return(int code, pid_t *pid);
 int		open_and_error(t_data *data, t_cmd *cmd);
 int		init_data(t_data *data, t_cmd *cmd);
 void	close_backup_and_return(int stdin_backup, int stdout_backup, char *str);

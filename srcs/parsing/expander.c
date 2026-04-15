@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 10:31:11 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/27 14:34:37 by lucas            ###   ########.fr       */
+/*   Updated: 2026/04/15 11:37:43 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ static int	expand_args(t_cmd *cmd, t_expand *e)
 		if (!expanded)
 			return (0);
 		if (!expanded[0] && !ft_strchr(cmd->args[i], '\'')
-			&& !ft_strchr(cmd->args[i], '"')) // expand_str retourne "" dans le cas où la variable n'est pas trouvé, si on a pas de single ou double quote on doit la supprimer 
-			remove_empty_args(cmd->args, i, expanded); 
+			&& !ft_strchr(cmd->args[i], '"'))
+			remove_empty_args(cmd->args, i, expanded);
 		else
 		{
 			free(cmd->args[i]);

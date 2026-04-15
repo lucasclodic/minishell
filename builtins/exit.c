@@ -53,10 +53,6 @@ static long	ft_atol(char *str)
 	return (result * sign);
 }
 
-// "exit" -> quitte le shell
-// "exit abc" ->"numeric argument required", quitte avec code 2
-// "exit 1 2" -> "too many arguments", ne quitte PAS, retourne 1
-// "exit 42"-> quitte avec code 42 (modulo 256 car les codes de sorties ne peuvent pas dépasser 255)
 int	ft_exit(char **args)
 {
 	long	code;
@@ -75,6 +71,6 @@ int	ft_exit(char **args)
 		return (1);
 	}
 	code = ft_atol(args[1]);
-	exit((unsigned char)code); // revient à faire un % 256 sur le code
+	exit((unsigned char)code);
 	return (0);
 }

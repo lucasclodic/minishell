@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander-utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/20 10:31:27 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/27 14:22:29 by lucas            ###   ########.fr       */
+/*   Updated: 2026/04/15 11:37:16 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char	*get_var_value(char *str, int *i, t_expand *e)
 		return (ft_itoa(e->exit_status));
 	}
 	if (!is_var_char(str[*i]))
-		return (ft_strdup("$")); 
+		return (ft_strdup("$"));
 	if (str[*i] >= '0' && str[*i] <= '9')
 	{
 		(*i)++;

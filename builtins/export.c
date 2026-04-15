@@ -12,8 +12,6 @@
 
 #include "../includes/minishell.h"
 
-// verifie que le nom de variable est valide
-// doit commencer par une lettre ou _ puis que des alphanumeriques ou _
 static int	is_valid_name(char *name, int len)
 {
 	int	i;
@@ -33,9 +31,6 @@ static int	is_valid_name(char *name, int len)
 	return (1);
 }
 
-// "export" sans argument -> affiche toutes les variables au format :
-// declare -> NAME="value"
-// attention à bien tester en bash et pas zsh, bash -c "export | head -3" affiche le declare -x
 static void	print_export(char **env)
 {
 	int	i;
@@ -59,9 +54,6 @@ static void	print_export(char **env)
 	}
 }
 
-// "export VAR=value" -> ajoute ou modifie la variable dans env
-// "export VAR" sans = -> ne fait rien
-// retourne 1 si erreur sur au moins un argument
 static int	find_eq(char *arg)
 {
 	int	i;
@@ -69,13 +61,13 @@ static int	find_eq(char *arg)
 	i = 0;
 	while (arg[i] && arg[i] != '=')
 		i++;
-	if (arg[i] != '=')
-		return (-1);
 	if (!is_valid_name(arg, i))
 	{
 		print_error("export", arg, "not a valid identifier");
 		return (-2);
 	}
+	if (arg[i] != '=')
+		return (-1);
 	return (i);
 }
 
@@ -85,16 +77,9 @@ static int	handle_export_arg(char *arg, char ***env)
 	char	*name;
 	char	*value;
 
-	eq_pos = find_eq(arg); // position du =
+	eq_pos = find_eq(arg);
 	if (eq_pos == -1)
-	{
-		if (!is_valid_name(arg, ft_strlen(arg)))
-		{
-			print_error("export", arg, "not a valid identifier");
-			return (1);
-		}
 		return (0);
-	}
 	if (eq_pos == -2)
 		return (1);
 	name = ft_substr(arg, 0, eq_pos);

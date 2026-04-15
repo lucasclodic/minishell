@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser-utils.c                                     :+:      :+:    :+:   */
+/*   cmd-utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lucas <lucas@student.42.fr>                +#+  +:+       +#+        */
+/*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:09:01 by lucas             #+#    #+#             */
-/*   Updated: 2026/03/23 17:58:11 by lucas            ###   ########.fr       */
+/*   Updated: 2026/04/15 11:33:01 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	free_args(char **args, int count)
 	if (!args[i])
 	{
 		free(args);
-		return ; 
+		return ;
 	}
 	while (i < count)
 	{
@@ -84,4 +84,13 @@ void	free_cmds(t_cmd **cmds)
 		current = temp;
 	}
 	*cmds = NULL;
+}
+
+t_node	*skip_to_pipe(t_node *tokens)
+{
+	while (tokens && tokens->type != PIPE)
+		tokens = tokens->next;
+	if (tokens)
+		tokens = tokens->next;
+	return (tokens);
 }
