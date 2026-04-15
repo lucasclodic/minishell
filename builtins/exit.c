@@ -57,7 +57,8 @@ int	ft_exit(char **args)
 {
 	long	code;
 
-	ft_putendl_fd("exit", 2);
+	if (isatty(STDIN_FILENO))
+		ft_putendl_fd("exit", 2);
 	if (!args[1])
 		exit(0);
 	if (!is_numeric(args[1]))

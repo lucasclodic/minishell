@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/19 17:09:02 by lucas             #+#    #+#             */
-/*   Updated: 2026/04/15 11:53:54 by lclodic          ###   ########.fr       */
+/*   Updated: 2026/04/15 15:17:58 by mnicolas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,5 +159,21 @@ int		init_data(t_data *data, t_cmd *cmd);
 void	close_backup_and_return(int stdin_backup, int stdout_backup, char *str);
 void	close_in_out(int infd, int outfd);
 void	execve_err_msg(char *cmd, int mode);
+
+// ======== gnl ========
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1
+# endif
+
+char	*get_next_line(int fd);
+char	*free_and_null(char **buf, char *s, char *t);
+char	*readfile(int fd, ssize_t *bytes);
+char	*end(char **buffer, ssize_t *bytes);
+char	*line(char **buffer);
+size_t	len(const char *s);
+char	*ftt_strjoin(const char *s1, const char *s2);
+char	*ftt_strchr(const char *s, int c);
+char	*ftt_strdup(const char *s1);
+char	*ftt_substr(char const *s, size_t start, size_t len);
 
 #endif

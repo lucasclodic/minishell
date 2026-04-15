@@ -6,7 +6,7 @@
 #    By: mnicolas <mnicolas@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/19 17:09:08 by lucas             #+#    #+#              #
-#    Updated: 2026/04/01 15:08:51 by mnicolas         ###   ########.fr        #
+#    Updated: 2026/04/15 14:14:35 by mnicolas         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CFLAGS = -Wall -Wextra -Werror
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
-SRCS =	srcs/minishell.c\
+SRCS =	srcs/main.c\
 		srcs/parsing/tokeniser.c srcs/parsing/tokeniser-utils.c\
 		srcs/parsing/cmd.c srcs/parsing/cmd-utils.c\
 		srcs/parsing/expander.c srcs/parsing/expander-utils.c\
@@ -28,11 +28,12 @@ SRCS =	srcs/minishell.c\
 		builtins/echo.c builtins/cd.c builtins/pwd.c\
 		builtins/export.c builtins/unset.c builtins/env.c\
 		builtins/exit.c\
-		exec.c execute_cmd.c exec_utils.c exec_utils2.c redirs.c exec_utils3.c
+		exec.c execute_cmd.c exec_utils.c exec_utils2.c redirs.c exec_utils3.c\
+		gnl.c gnl_utils.c
 
 OBJ_DIR = obj
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
-VPATH = srcs:srcs/parsing:srcs/env:srcs/signals:builtins:srcs/exec:.
+VPATH = srcs:srcs/parsing:srcs/env:srcs/signals:builtins:srcs/exec:srcs/gnl:.
 
 all: $(NAME)
 
