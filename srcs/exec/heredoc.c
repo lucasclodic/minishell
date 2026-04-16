@@ -29,10 +29,16 @@ static char	*heredoc_read(void)
 	return (line);
 }
 
-static void	heredoc_write(char *line, t_data *data)
+static void	heredoc_write(char *line, t_data *data, int quoted)
 {
 	char	*expanded;
 
+	if (quoted)
+	{
+		write(data->pipefd[1], line, ft_strlen(line));
+		write(data->pipefd[1], "\n", 1);
+		return ;
+	}
 	expanded = expand_heredoc(line, data->env, data->exit_status);
 	if (expanded)
 	{
@@ -44,7 +50,35 @@ static void	heredoc_write(char *line, t_data *data)
 	write(data->pipefd[1], "\n", 1);
 }
 
-int	get_lines(char *delim, t_data *data)
+static char	*clean_delim(char *delim, int *quoted)
+{
+	char	*res;
+	int		i;
+	int		j;
+
+	*quoted = 0;
+	i = 0;
+	while (delim[i] && delim[i] != '\'' && delim[i] != '"')
+		i++;
+	if (!delim[i])
+		return (ft_strdup(delim));
+	*quoted = 1;
+	res = malloc(ft_strlen(delim) + 1);
+	if (!res)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (delim[i])
+	{
+		if (delim[i] != '\'' && delim[i] != '"')
+			res[j++] = delim[i];
+		i++;
+	}
+	res[j] = '\0';
+	return (res);
+}
+
+static int	heredoc_loop(char *clean, int quoted, t_data *data)
 {
 	char	*line;
 
@@ -59,14 +93,31 @@ int	get_lines(char *delim, t_data *data)
 			close(data->pipefd[1]);
 			return (130);
 		}
-		if (!line || ft_strcmp(line, delim) == 0)
+		if (!line || ft_strcmp(line, clean) == 0)
 		{
 			free(line);
 			break ;
 		}
-		heredoc_write(line, data);
+		heredoc_write(line, data, quoted);
 		free(line);
 	}
 	close(data->pipefd[1]);
 	return (0);
+}
+
+int	get_lines(char *delim, t_data *data)
+{
+	char	*clean;
+	int		quoted;
+	int		ret;
+
+	clean = clean_delim(delim, &quoted);
+	if (!clean)
+	{
+		close(data->pipefd[1]);
+		return (0);
+	}
+	ret = heredoc_loop(clean, quoted, data);
+	free(clean);
+	return (ret);
 }

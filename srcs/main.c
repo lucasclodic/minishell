@@ -96,7 +96,7 @@ int	run_shell(char ***env)
 				break ;
 			continue ;
 		}
-		if (isatty(STDIN_FILENO))
+		if (isatty(STDIN_FILENO) && has_content(str))
 			add_history(str);
 		exit_code = process_line(str, env, exit_code, &should_break);
 		free(str);

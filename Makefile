@@ -13,9 +13,17 @@
 NAME = minishell
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
+LDFLAGS = -lreadline
 LIBFT_DIR = libft
 LIBFT = $(LIBFT_DIR)/libft.a
 LIBFT_SRCS = $(wildcard $(LIBFT_DIR)/*.c) $(wildcard $(LIBFT_DIR)/*.h)
+
+UNAME := $(shell uname)
+ifeq ($(UNAME), Darwin)
+	READLINE_PREFIX := $(shell brew --prefix readline 2>/dev/null)
+	CFLAGS += -I$(READLINE_PREFIX)/include
+	LDFLAGS := -L$(READLINE_PREFIX)/lib $(LDFLAGS)
+endif
 
 SRCS =	srcs/main.c srcs/main2.c\
 		srcs/parsing/tokeniser.c srcs/parsing/tokeniser-utils.c\
@@ -44,7 +52,7 @@ $(LIBFT): $(LIBFT_SRCS)
 	@$(MAKE) -C $(LIBFT_DIR)
 
 $(NAME): $(LIBFT) $(OBJS)
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -lreadline -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(LDFLAGS) -o $(NAME)
 
 $(OBJ_DIR)/%.o: %.c includes/minishell.h | $(OBJ_DIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
