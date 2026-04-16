@@ -6,7 +6,7 @@
 /*   By: lclodic <lclodic@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/31 14:37:29 by mnicolas          #+#    #+#             */
-/*   Updated: 2026/04/15 14:01:44 by lclodic          ###   ########.fr       */
+/*   Updated: 2026/04/16 10:15:10 by lclodic          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	close_and_handle_infile(t_node *redirs, t_data *data)
 		close(data->pipefd[0]);
 		data->here_doc = 0;
 	}
-	if (data->infd != -2)
+	if (data->infd > 2)
 		close(data->infd);
 	if (redirs->type == REDIR_IN)
 	{
