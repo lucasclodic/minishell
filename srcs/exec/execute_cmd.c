@@ -111,7 +111,7 @@ void	execute(t_cmd *cmds, char **envp, t_data data)
 	data.pid = NULL;
 	if (is_builtin(cmds->args[0]))
 	{
-		exit_c = exec_builtin(cmds, &envp);
+		exit_c = exec_builtin(cmds, &envp, data.exit_status);
 		child_cleanup_and_exit(cmds, envp, data, exit_c);
 	}
 	if (ft_strchr(cmds->args[0], '/'))

@@ -13,7 +13,7 @@
 #include "../includes/minishell.h"
 #include <sys/stat.h>
 
-static char	*get_cd_path(char **args, char **env)
+static char	*get_cd_path(char **args, char **env, int *print_path)
 {
 	char	*path;
 
@@ -22,6 +22,15 @@ static char	*get_cd_path(char **args, char **env)
 		path = get_env(env, "HOME");
 		if (!path)
 			print_error("cd", NULL, "HOME not set");
+		return (path);
+	}
+	if (!ft_strncmp(args[1], "-", 2))
+	{
+		path = get_env(env, "OLDPWD");
+		if (!path)
+			print_error("cd", NULL, "OLDPWD not set");
+		else
+			*print_path = 1;
 		return (path);
 	}
 	return (args[1]);
@@ -54,13 +63,15 @@ int	ft_cd(char **args, char ***env)
 {
 	char	*path;
 	char	*oldpwd;
+	int		print_path;
 
+	print_path = 0;
 	if (args[1] && args[2])
 	{
 		print_error("cd", NULL, "too many arguments");
 		return (1);
 	}
-	path = get_cd_path(args, *env);
+	path = get_cd_path(args, *env, &print_path);
 	if (!path)
 		return (1);
 	oldpwd = getcwd(NULL, 0);
@@ -70,6 +81,8 @@ int	ft_cd(char **args, char ***env)
 		free(oldpwd);
 		return (1);
 	}
+	if (print_path)
+		ft_putendl_fd(path, 1);
 	update_pwd(env, oldpwd);
 	free(oldpwd);
 	return (0);

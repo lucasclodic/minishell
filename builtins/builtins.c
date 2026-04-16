@@ -33,7 +33,7 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-int	exec_builtin(t_cmd *cmd, char ***env)
+int	exec_builtin(t_cmd *cmd, char ***env, int last_status)
 {
 	if (!ft_strncmp(cmd->args[0], "echo", 5))
 		return (ft_echo(cmd->args));
@@ -48,6 +48,6 @@ int	exec_builtin(t_cmd *cmd, char ***env)
 	if (!ft_strncmp(cmd->args[0], "env", 4))
 		return (ft_env(*env));
 	if (!ft_strncmp(cmd->args[0], "exit", 5))
-		return (ft_exit(cmd->args));
+		return (ft_exit(cmd->args, last_status));
 	return (1);
 }

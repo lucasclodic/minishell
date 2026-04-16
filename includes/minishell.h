@@ -100,7 +100,7 @@ char	**copy_env(char **envp);
 
 // ======== builtins/builtins.c ========
 int		is_builtin(char *cmd);
-int		exec_builtin(t_cmd *cmd, char ***env);
+int		exec_builtin(t_cmd *cmd, char ***env, int last_status);
 
 // ======== signals/signals.c ========
 extern volatile sig_atomic_t	g_signal;
@@ -116,7 +116,7 @@ int		ft_export(char **args, char ***env);
 char	**sorted_env(char **env);
 int		ft_unset(char **args, char ***env);
 int		ft_env(char **env);
-int		ft_exit(char **args);
+int		ft_exit(char **args, int last_status);
 
 // ======== error.c ========
 void	syntax_error(char *token);

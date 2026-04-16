@@ -87,7 +87,3 @@ precisely:
   compliant helpers.
 - **Documentation.** This README was drafted with AI assistance and reviewed
   and edited by hand.
-
-No AI-generated code was copied into the project without being read, understood
-and, in most cases, rewritten. Every contributor is able to explain and justify
-every line of the project.

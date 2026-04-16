@@ -64,7 +64,7 @@ int	execute_builtin(t_cmd *cmd, char ***envp, t_data data)
 		close_in_out(data.infd, data.outfd);
 		close_backup_and_return(stdin_backup, stdout_backup, "dup2");
 	}
-	exit_c = exec_builtin(cmd, envp);
+	exit_c = exec_builtin(cmd, envp, data.exit_status);
 	dup2(stdin_backup, 0);
 	dup2(stdout_backup, 1);
 	close(stdin_backup);

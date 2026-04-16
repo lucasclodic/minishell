@@ -57,14 +57,14 @@ static int	parse_long(const char *str, long *out)
 	return (1);
 }
 
-int	ft_exit(char **args)
+int	ft_exit(char **args, int last_status)
 {
 	long	code;
 
 	if (isatty(STDIN_FILENO))
 		ft_putendl_fd("exit", 2);
 	if (!args[1])
-		exit(0);
+		exit((unsigned char)last_status);
 	if (!is_numeric(args[1]) || !parse_long(args[1], &code))
 	{
 		print_error("exit", args[1], "numeric argument required");
